@@ -1,4 +1,4 @@
-
+from textwrap import wrap
 
 def fileToBinary(file):
     
@@ -35,8 +35,43 @@ def binaryToFile(stripped_binary, filename):
 def byteCounter(string):
     return len(string)/8
 
+def splitter(binary):
+    split_bin = wrap(binary,8)
+    string_bin = ' '.join(map(str,split_bin))
+    return string_bin
+# encodeSideBinary = fileToBinary("imageFile.jpeg")
 
-encodeSideBinary = fileToBinary("imageFile.jpeg")
+# #to create new image file
+# binaryToFile(encodeSideBinary, "outputFile.jpeg")
 
-#to create new image file
-binaryToFile(encodeSideBinary, "outputFile.jpeg")
+'''Following is still under construction'''
+
+cover = fileToBinary("imageFile.jpeg")
+payload = fileToBinary('catTest.jpeg')
+# print(splitter(payload))
+# print("this is cover: ",splitter(cover))
+def lsb_replacement(cover,payload):
+    list_cover = list(cover)
+    list_payload = list(payload)
+
+    #this is only for if LSB setting is 1 bit
+
+    counter = 7
+    pointer = 0
+    #the following is only assuming that the cover file is big enough for payload
+    while pointer< len(list_payload):
+        list_cover[counter] = list_payload[pointer]
+        counter += 8
+        pointer += 1
+    
+    output = "".join(list_cover)
+
+    return output
+
+stego_binary = lsb_replacement(cover,payload)
+# print("this is stego: ",splitter(stego_binary))
+binaryToFile(stego_binary,"newFile.jpeg")
+
+
+
+

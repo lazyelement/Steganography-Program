@@ -12,6 +12,7 @@ from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, filedialog
 from tkinter import *
 import tkinter as tk
 from PIL import Image, ImageTk
+from TkinterDnD2 import DND_FILES, TkinterDnD #need pip install
 import os
 #from TkinterDnD2 import DND_FILES, TkinterDnD
 
@@ -42,13 +43,54 @@ def decoder_check_for_error():
         tk.messagebox.showinfo(title="Success!", message="Decoding successful!") # Success message pop up
     else:
         tk.messagebox.showerror(title="Failed to decode", message="Decoding unsuccessful. Stego object missing.") # Error message pop up
-    
-def previewImage(path):
-    global coverobj_img
-    coverobj_img = PhotoImage(file=path)   #create image
-    coverobj_img.zoom(2)
-    coverobj_img.subsample(1)
-    img_preview = tbox_coverobj.image_create(END, image=coverobj_img)
+
+    #This function is use to preview images:
+    ##params {path - the file path to obtain image}
+    ##params {objectFlag - 0 for cover Object, 1 for payload, 2 for stego}   
+def previewImage(path, objectFlag):
+    if (objectFlag == 0):
+        #Creates a label to display image on
+        raw_image_label = Label(window, text="Select Raw Image", height=(624-379), width=(279-56), relief="solid",bg="#FFFFFF")
+        raw_image_label.place(x=379, y=56)
+        #Open image -> calculate optimal size to resize -> resize
+        selected_image = Image.open(path)
+        max_width = (279-56)
+        aspect_ratio = max_width / float(selected_image.size[0])
+        max_height = int((float(selected_image.size[1]) * float(aspect_ratio)))
+        selected_image = selected_image.resize((max_width, max_height), Image.ANTIALIAS)
+        selected_image = ImageTk.PhotoImage(selected_image)
+        #config the size of image to label (CHANGE the height and width below to alter the size)
+        raw_image_label.config(image=selected_image, height=(624-402), width= (279-38))
+        raw_image_label.image = selected_image
+    elif (objectFlag == 1):
+        #Creates a label to display image on
+        raw_image_label = Label(window, text="Select Raw Image", height=(315-70), width=(279-56), relief="solid",bg="#FFFFFF")
+        raw_image_label.place(x=70, y=56)
+        #Open image -> calculate optimal size to resize -> resize
+        selected_image = Image.open(path)
+        max_width = (279-56)
+        aspect_ratio = max_width / float(selected_image.size[0])
+        max_height = int((float(selected_image.size[1]) * float(aspect_ratio)))
+        selected_image = selected_image.resize((max_width, max_height), Image.ANTIALIAS)
+        selected_image = ImageTk.PhotoImage(selected_image)
+        #config the size of image to label (CHANGE the height and width below to alter the size)
+        raw_image_label.config(image=selected_image, height=(624-402), width= (279-38))
+        raw_image_label.image = selected_image
+    elif (objectFlag == 2):
+        #Creates a label to display image on
+        raw_image_label = Label(window, text="Select Raw Image", height=(933-688), width=(279-56), relief="solid",bg="#FFFFFF")
+        raw_image_label.place(x=688, y=56)
+        #Open image -> calculate optimal size to resize -> resize
+        selected_image = Image.open(path)
+        max_width = (279-56)
+        aspect_ratio = max_width / float(selected_image.size[0])
+        max_height = int((float(selected_image.size[1]) * float(aspect_ratio)))
+        selected_image = selected_image.resize((max_width, max_height), Image.ANTIALIAS)
+        selected_image = ImageTk.PhotoImage(selected_image)
+        #config the size of image to label (CHANGE the height and width below to alter the size)
+        raw_image_label.config(image=selected_image, height=(624-402), width= (279-38))
+        raw_image_label.image = selected_image
+
 
 
 def previewText(path):
@@ -63,8 +105,8 @@ def previewVideo(path):
     videoplayer.pack(expand=True, fill="both")
     videoplayer.play()
 
-#function to open file explorer (and selecting file in file explorer)
-def open_file_explorer():
+#function to open file explorer (and selecting file in file explorer) for cover
+def open_file_explorer_cover():
     rep = filedialog.askopenfilenames(
     	parent=window,
     	initialdir=os.path.join(os.path.join(os.path.expanduser('~')), 'Desktop'), # set path to open desktop in file explorer
@@ -75,7 +117,57 @@ def open_file_explorer():
         abspath = rep[0]
         print(abspath)
         if(abspath.endswith(".png")):
-            previewImage(abspath)
+            #Call function to preview image & change cover flag to 1
+            previewImage(abspath, 0)
+            cover_object_flag = 1
+        elif(abspath.endswith(".txt")):
+            previewText(abspath)
+        elif(abspath.endswith(".mp4")):
+            previewVideo(abspath)
+
+    except IndexError:
+        tk.messagebox.showerror(title="No file selected", message="No file selected") # Error message pop up
+     #to-do: except top show error if file type selected not supported
+
+#function to open file explorer (and selecting file in file explorer) for payload
+def open_file_explorer_payload():
+    rep = filedialog.askopenfilenames(
+    	parent=window,
+    	initialdir=os.path.join(os.path.join(os.path.expanduser('~')), 'Desktop'), # set path to open desktop in file explorer
+    	#initialfile='tmp',
+    	filetypes=[("All files", "*")])
+
+    try:
+        abspath = rep[0]
+        print(abspath)
+        if(abspath.endswith(".png")):
+            #Call function to preview image & change payload flag to 1
+            previewImage(abspath, 1)
+            payload_flag = 1
+        elif(abspath.endswith(".txt")):
+            previewText(abspath)
+        elif(abspath.endswith(".mp4")):
+            previewVideo(abspath)
+
+    except IndexError:
+        tk.messagebox.showerror(title="No file selected", message="No file selected") # Error message pop up
+     #to-do: except top show error if file type selected not supported
+
+#function to open file explorer (and selecting file in file explorer) for stego
+def open_file_explorer_stego():
+    rep = filedialog.askopenfilenames(
+    	parent=window,
+    	initialdir=os.path.join(os.path.join(os.path.expanduser('~')), 'Desktop'), # set path to open desktop in file explorer
+    	#initialfile='tmp',
+    	filetypes=[("All files", "*")])
+
+    try:
+        abspath = rep[0]
+        print(abspath)
+        if(abspath.endswith(".png")):
+            #Call function to preview image & change stego flag to 1
+            previewImage(abspath, 2)
+            stego_flag = 1
         elif(abspath.endswith(".txt")):
             previewText(abspath)
         elif(abspath.endswith(".mp4")):
@@ -258,7 +350,7 @@ payload_browse_button = Button(
     image=button_image_3,
     borderwidth=0,
     highlightthickness=0,
-    command=open_file_explorer
+    command=open_file_explorer_payload
 )
 payload_browse_button.place(
     x=146.0,
@@ -277,6 +369,10 @@ canvas.create_rectangle(
     outline="#000066",
     dash=(4,4))
 
+
+
+
+
 # Cover rectangle text
 canvas.create_text(
     418.0,
@@ -287,6 +383,8 @@ canvas.create_text(
     font=("Inter Regular", 14 * -1)
 )
 
+#create an invisible label over cover rectangle
+
 # Cover Browse button
 button_image_4 = PhotoImage(
     file=relative_to_assets("button_4.png"))
@@ -294,7 +392,7 @@ cover_browse_button = Button(
     image=button_image_4,
     borderwidth=0,
     highlightthickness=0,
-    command=open_file_explorer
+    command=open_file_explorer_cover
 )
 cover_browse_button.place(
     x=455.0,
@@ -331,7 +429,7 @@ stego_browse_button = Button(
     borderwidth=0,
     highlightthickness=0,
     activeforeground="#000066",
-    command=open_file_explorer
+    command=open_file_explorer_stego
 )
 stego_browse_button.place(
     x=764.0,

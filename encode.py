@@ -7,7 +7,7 @@
 import cv2, numpy as np, os
 from textwrap import wrap
 
-data = "30secvid.mp4"
+data = "imageFile.jpeg"
 
 #Find extension of file
 split_tup = os.path.splitext(data)

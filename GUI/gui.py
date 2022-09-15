@@ -3,6 +3,7 @@
 # https://github.com/ParthJadhav/Tkinter-Designer
 
 
+from asyncio.windows_events import ERROR_CONNECTION_ABORTED
 from pathlib import Path
 
 # from tkinter import *
@@ -15,12 +16,33 @@ import os
 #from TkinterDnD2 import DND_FILES, TkinterDnD
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path("./assets")
+ASSETS_PATH = OUTPUT_PATH / Path("./assets") 
+
+payload_flag = 0
+cover_object_flag = 0
+stego_flag = 0
 
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
+def encoder_check_for_error():
+    if(payload_flag == 1 and cover_object_flag == 1):
+        tk.messagebox.showinfo(title="Success!", message="Encoding successful!") # Success message pop up
+    elif (payload_flag == 1 and cover_object_flag == 0):
+        tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Cover object missing.") # Error message pop up
+    elif (payload_flag == 0 and cover_object_flag == 1):
+        tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Payload missing.") # Error message pop up
+    else:
+        tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Payload and cover object missing.") # Error message pop up
+    
+
+def decoder_check_for_error():
+    if(stego_flag == 1):
+        tk.messagebox.showinfo(title="Success!", message="Decoding successful!") # Success message pop up
+    else:
+        tk.messagebox.showerror(title="Failed to decode", message="Decoding unsuccessful. Stego object missing.") # Error message pop up
+    
 def previewImage(path):
     global coverobj_img
     coverobj_img = PhotoImage(file=path)   #create image
@@ -59,9 +81,9 @@ def open_file_explorer():
         elif(abspath.endswith(".mp4")):
             previewVideo(abspath)
 
-	    
     except IndexError:
-        print("No file selected")
+        tk.messagebox.showerror(title="No file selected", message="No file selected") # Error message pop up
+     #to-do: except top show error if file type selected not supported
 
 def show_selected_lsb(choice):
     choice = variable.get()
@@ -152,7 +174,7 @@ encode_button = Button(
     image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: print("Encode button clicked"),
+    command=lambda: encoder_check_for_error(),
     relief="flat"
 )
 encode_button.place(
@@ -199,7 +221,7 @@ decode_button = Button(
     image=button_image_2,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: print("Decode button clicked"),
+    command=lambda: decoder_check_for_error(),
     relief="flat"
 )
 decode_button.place(

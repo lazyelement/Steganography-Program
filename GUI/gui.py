@@ -206,6 +206,7 @@ window.geometry("1004x796")
 window.configure(bg = "#FFFFFF")
 
 
+
 canvas = Canvas(
     window,
     bg = "#FFFFFF",
@@ -376,15 +377,19 @@ payload_browse_button.place(
     height=30
 )
 ################################################################################
+
 #Create an invisible canvas for Drag and drop
-# cover_canvas = Canvas(window, width=(279-43),height=(624-412), relief='sunken')
-# cover_canvas.create_text(384,60,text="File here",anchor = NW)
-# cover_canvas.place(x=384,y=60)
-# #define the drop evnt
-# def cover_drop(event):
-#     print("hi")
-# cover_canvas.drop_target_register(tkinterdnd2.DND_FILES)
-# cover_canvas.dnd_bind('<<Drop>>', cover_drop)
+cover_canvas = Canvas(window, width=(279-43),height=(624-412), relief='sunken', bg="#F5F5F5")
+cover_canvas.place(x=384,y=60)
+
+#define the drop evnt
+def cover_drop(event):
+    print("hi")
+    previewImage(event.data, 0)
+    cover_object_flag = 1
+cover_canvas.drop_target_register(tkinterdnd2.DND_FILES)
+cover_canvas.dnd_bind('<<Drop>>', cover_drop)
+
 # Cover rectangle
 canvas.create_rectangle(
     379.0,
@@ -394,7 +399,6 @@ canvas.create_rectangle(
     fill="#F5F5F5",
     outline="#000066",
     dash=(4,4))
-
 # Cover rectangle text
 canvas.create_text(
     418.0,
@@ -404,6 +408,8 @@ canvas.create_text(
     fill="#000066",
     font=("Inter Regular", 14 * -1)
 )
+
+
 
 
 # Cover Browse button
@@ -460,5 +466,7 @@ stego_browse_button.place(
     width=95,
     height=30
 )
+
+
 window.resizable(False, False)
 window.mainloop()

@@ -60,44 +60,14 @@ def previewImage(path, objectFlag):
         #Creates a label to display image on
         raw_image_label = Label(window, text="Select Raw Image", height=(624-379), width=(279-56), relief="solid",bg="#FFFFFF")
         raw_image_label.place(x=379, y=56)
-        #Open image -> calculate optimal size to resize -> resize
-        selected_image = Image.open(path)
-        max_width = (279-56)
-        aspect_ratio = max_width / float(selected_image.size[0])
-        max_height = int((float(selected_image.size[1]) * float(aspect_ratio)))
-        selected_image = selected_image.resize((max_width, max_height), Image.ANTIALIAS)
-        selected_image = ImageTk.PhotoImage(selected_image)
-        #config the size of image to label (CHANGE the height and width below to alter the size)
-        raw_image_label.config(image=selected_image, height=(624-402), width= (279-38))
-        raw_image_label.image = selected_image
     elif (objectFlag == 1):
         #Creates a label to display image on
         raw_image_label = Label(window, text="Select Raw Image", height=(315-70), width=(279-56), relief="solid",bg="#FFFFFF")
         raw_image_label.place(x=70, y=56)
-        #Open image -> calculate optimal size to resize -> resize
-        selected_image = Image.open(path)
-        max_width = (279-56)
-        aspect_ratio = max_width / float(selected_image.size[0])
-        max_height = int((float(selected_image.size[1]) * float(aspect_ratio)))
-        selected_image = selected_image.resize((max_width, max_height), Image.ANTIALIAS)
-        selected_image = ImageTk.PhotoImage(selected_image)
-        #config the size of image to label (CHANGE the height and width below to alter the size)
-        raw_image_label.config(image=selected_image, height=(624-402), width= (279-38))
-        raw_image_label.image = selected_image
     elif (objectFlag == 2):
         #Creates a label to display image on
         raw_image_label = Label(window, text="Select Raw Image", height=(933-688), width=(279-56), relief="solid",bg="#FFFFFF")
         raw_image_label.place(x=688, y=56)
-        #Open image -> calculate optimal size to resize -> resize
-        selected_image = Image.open(path)
-        max_width = (279-56)
-        aspect_ratio = max_width / float(selected_image.size[0])
-        max_height = int((float(selected_image.size[1]) * float(aspect_ratio)))
-        selected_image = selected_image.resize((max_width, max_height), Image.ANTIALIAS)
-        selected_image = ImageTk.PhotoImage(selected_image)
-        #config the size of image to label (CHANGE the height and width below to alter the size)
-        raw_image_label.config(image=selected_image, height=(624-402), width= (279-38))
-        raw_image_label.image = selected_image
     elif (objectFlag == 3): #Use objectflag 3 to preview output objects
         #Creates a label to display image on
         raw_image_label = Label(window, text="Select Raw Image", height=(712-359), width=(471-70), relief="solid",bg="#FFFFFF")
@@ -112,7 +82,18 @@ def previewImage(path, objectFlag):
         #config the size of image to label (CHANGE the height and width below to alter the size)
         raw_image_label.config(image=selected_image, height=(712-359), width= (471-70))
         raw_image_label.image = selected_image
+        return
 
+    #Open image -> calculate optimal size to resize -> resize
+    selected_image = Image.open(path)
+    max_width = (279-56)
+    aspect_ratio = max_width / float(selected_image.size[0])
+    max_height = int((float(selected_image.size[1]) * float(aspect_ratio)))
+    selected_image = selected_image.resize((max_width, max_height), Image.ANTIALIAS)
+    selected_image = ImageTk.PhotoImage(selected_image)
+    #config the size of image to label (CHANGE the height and width below to alter the size)
+    raw_image_label.config(image=selected_image, height=(624-402), width= (279-38))
+    raw_image_label.image = selected_image
 
     #This function is use to preview text:
     ##params {path - the file path to obtain image}
@@ -160,7 +141,7 @@ def open_file_explorer_cover():
     	parent=window,
     	initialdir=os.path.join(os.path.join(os.path.expanduser('~')), 'Desktop'), # set path to open desktop in file explorer
     	#initialfile='tmp',
-    	filetypes=[("All files", "*")])
+    	filetypes=[("All files", "*")]) 
 
     try:
         cover_path = rep[0]
@@ -338,28 +319,8 @@ encode_button.place(
     height=70.0
 )
 
-# # Textbox image for LSB
-# entry_image_1 = PhotoImage(
-#     file=relative_to_assets("entry_1.png"))
-# entry_bg_1 = canvas.create_image(
-#     696.5,
-#     398.0,
-#     image=entry_image_1
-# )
-# entry_1 = Entry(
-#     bd=0,
-#     bg="#D9D9D9",
-#     highlightthickness=0
-# )
-# entry_1.place(
-#     x=533.0,
-#     y=387.0,
-#     width=327.0,
-#     height=20.0
-# )
-
 # Create Dropdown
-OPTIONS = ["0","1","2","3","4","5","6","7"]
+OPTIONS = [i for i in range(0,8)]
 variable = StringVar(window)
 variable.set(OPTIONS[0]) # default value
 lsb_dropdown = OptionMenu(window, variable, *OPTIONS,command=show_selected_lsb)
@@ -567,7 +528,6 @@ payload_browse_button.place(
     width=95,
     height=30
 )
-
 
 window.resizable(False, False)
 window.mainloop()

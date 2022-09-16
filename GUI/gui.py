@@ -13,7 +13,7 @@ from tkinter import *
 import tkinter as tk
 from turtle import bgcolor
 from PIL import Image, ImageTk
-from TkinterDnD2 import DND_FILES, TkinterDnD #need pip install
+# from TkinterDnD2 import DND_FILES, TkinterDnD #need pip install
 import tkinterdnd2
 import os
 #from TkinterDnD2 import DND_FILES, TkinterDnD
@@ -108,12 +108,34 @@ def previewImage(path, objectFlag):
         raw_image_label.image = selected_image
 
 
+    #This function is use to preview images:
+    ##params {path - the file path to obtain image}
+    ##params {objectFlag - 0 for cover Object, 1 for payload, 2 for stego, 3 for output}
+def previewText(path, objectFlag):
+    if(objectFlag == 0):
+        tbox_coverobj = tk.Text(window, background="#ffffff")
+        tbox_coverobj.place(x=379,y=56,width=(279-30),height=(624-400))
+        with open(path, "r") as file:
+            for line in file:
+                    line = line.strip()
+                    tbox_coverobj.insert("end", f"{line}\n")
+    elif(objectFlag == 1):
+        tbox_payload = tk.Text(window, background="#ffffff")
+        tbox_payload.place(x=70,y=56,width=(279-30),height=(624-400))
+        with open(path, "r") as file:
+            for line in file:
+                    line = line.strip()
+                    tbox_payload.insert("end", f"{line}\n")
+    elif(objectFlag == 2):
+        tbox_payload = tk.Text(window, background="#ffffff")
+        tbox_payload.place(x=688,y=56,width=(279-30),height=(624-400))
+        with open(path, "r") as file:
+            for line in file:
+                    line = line.strip()
+                    tbox_payload.insert("end", f"{line}\n")
 
-def previewText(path):
-    with open(path, "r") as file:
-        for line in file:
-                line = line.strip()
-                tbox_coverobj.insert("end", f"{line}\n")
+
+    
 
 def previewVideo(path):
     videoplayer = TkinterVideo(master=window, scaled=True)
@@ -137,9 +159,12 @@ def open_file_explorer_cover():
             previewImage(abspath, 0)
             cover_object_flag = 1
         elif(abspath.endswith(".txt")):
-            previewText(abspath)
+            #Call function to preview text & change cover flag to 1
+            previewText(abspath,0)
+            cover_object_flag = 1
         elif(abspath.endswith(".mp4")):
             previewVideo(abspath)
+            cover_object_flag = 1
 
     except IndexError:
         tk.messagebox.showerror(title="No file selected", message="No file selected") # Error message pop up
@@ -161,9 +186,12 @@ def open_file_explorer_payload():
             previewImage(abspath, 1)
             payload_flag = 1
         elif(abspath.endswith(".txt")):
-            previewText(abspath)
+            #Call function to preview text & change cover flag to 1
+            previewText(abspath, 1)
+            payload_flag = 1
         elif(abspath.endswith(".mp4")):
             previewVideo(abspath)
+            payload_flag = 1
 
     except IndexError:
         tk.messagebox.showerror(title="No file selected", message="No file selected") # Error message pop up
@@ -185,9 +213,12 @@ def open_file_explorer_stego():
             previewImage(abspath, 2)
             stego_flag = 1
         elif(abspath.endswith(".txt")):
-            previewText(abspath)
+            #Call function to preview text & change cover flag to 1
+            previewText(abspath, 2)
+            stego_flag = 1
         elif(abspath.endswith(".mp4")):
             previewVideo(abspath)
+            stego_flag = 1
 
     except IndexError:
         tk.messagebox.showerror(title="No file selected", message="No file selected") # Error message pop up
@@ -384,9 +415,12 @@ cover_canvas.place(x=384,y=60)
 
 #define the drop evnt
 def cover_drop(event):
-    print("hi")
-    previewImage(event.data, 0)
-    cover_object_flag = 1
+    path = event.data
+    if(path.endswith(".png")):
+        previewImage(path, 0)
+        cover_object_flag = 1
+    elif(path.endswith(".txt")):
+        previewText(path, 0)
 cover_canvas.drop_target_register(tkinterdnd2.DND_FILES)
 cover_canvas.dnd_bind('<<Drop>>', cover_drop)
 

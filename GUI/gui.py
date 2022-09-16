@@ -4,6 +4,7 @@
 
 
 from asyncio.windows_events import ERROR_CONNECTION_ABORTED
+from distutils.util import convert_path
 from pathlib import Path
 
 # from tkinter import *
@@ -24,6 +25,9 @@ ASSETS_PATH = OUTPUT_PATH / Path("./assets")
 payload_flag = 0
 cover_object_flag = 0
 stego_flag = 0
+payload_path = ""
+cover_path = ""
+stego_path = ""
 
 
 def relative_to_assets(path: str) -> Path:
@@ -108,7 +112,7 @@ def previewImage(path, objectFlag):
         raw_image_label.image = selected_image
 
 
-    #This function is use to preview images:
+    #This function is use to preview text:
     ##params {path - the file path to obtain image}
     ##params {objectFlag - 0 for cover Object, 1 for payload, 2 for stego, 3 for output}
 def previewText(path, objectFlag):
@@ -133,6 +137,14 @@ def previewText(path, objectFlag):
             for line in file:
                     line = line.strip()
                     tbox_payload.insert("end", f"{line}\n")
+    elif(objectFlag == 3):
+        tbox_output = tk.Text(window, background="#ffffff")
+        tbox_output.place(x=70,y=359,width=(471-70),height=(712-359))
+        with open(path, "r") as file:
+            for line in file:
+                    line = line.strip()
+                    tbox_output.insert("end", f"{line}\n")
+
 
 
     
@@ -152,18 +164,18 @@ def open_file_explorer_cover():
     	filetypes=[("All files", "*")])
 
     try:
-        abspath = rep[0]
-        print(abspath)
-        if(abspath.endswith(".png")):
+        cover_path = rep[0]
+        print(cover_path)
+        if(cover_path.endswith(".png")):
             #Call function to preview image & change cover flag to 1
-            previewImage(abspath, 0)
+            previewImage(cover_path, 0)
             cover_object_flag = 1
-        elif(abspath.endswith(".txt")):
+        elif(cover_path.endswith(".txt")):
             #Call function to preview text & change cover flag to 1
-            previewText(abspath,0)
+            previewText(cover_path,0)
             cover_object_flag = 1
-        elif(abspath.endswith(".mp4")):
-            previewVideo(abspath)
+        elif(cover_path.endswith(".mp4")):
+            previewVideo(cover_path)
             cover_object_flag = 1
 
     except IndexError:
@@ -179,18 +191,18 @@ def open_file_explorer_payload():
     	filetypes=[("All files", "*")])
 
     try:
-        abspath = rep[0]
-        print(abspath)
-        if(abspath.endswith(".png")):
+        payload_path = rep[0]
+        print(payload_path)
+        if(payload_path.endswith(".png")):
             #Call function to preview image & change payload flag to 1
-            previewImage(abspath, 1)
+            previewImage(payload_path, 1)
             payload_flag = 1
-        elif(abspath.endswith(".txt")):
+        elif(payload_path.endswith(".txt")):
             #Call function to preview text & change cover flag to 1
-            previewText(abspath, 1)
+            previewText(payload_path, 1)
             payload_flag = 1
-        elif(abspath.endswith(".mp4")):
-            previewVideo(abspath)
+        elif(payload_path.endswith(".mp4")):
+            previewVideo(payload_path)
             payload_flag = 1
 
     except IndexError:
@@ -206,18 +218,18 @@ def open_file_explorer_stego():
     	filetypes=[("All files", "*")])
 
     try:
-        abspath = rep[0]
-        print(abspath)
-        if(abspath.endswith(".png")):
+        stego_path = rep[0]
+        print(stego_path)
+        if(stego_path.endswith(".png")):
             #Call function to preview image & change stego flag to 1
-            previewImage(abspath, 2)
+            previewImage(stego_path, 2)
             stego_flag = 1
-        elif(abspath.endswith(".txt")):
+        elif(stego_path.endswith(".txt")):
             #Call function to preview text & change cover flag to 1
-            previewText(abspath, 2)
+            previewText(stego_path, 2)
             stego_flag = 1
-        elif(abspath.endswith(".mp4")):
-            previewVideo(abspath)
+        elif(stego_path.endswith(".mp4")):
+            previewVideo(stego_path)
             stego_flag = 1
 
     except IndexError:
@@ -415,12 +427,12 @@ cover_canvas.place(x=384,y=60)
 
 #define the drop evnt
 def cover_drop(event):
-    path = event.data
-    if(path.endswith(".png")):
-        previewImage(path, 0)
+    cover_path = event.data
+    if(cover_path.endswith(".png")):
+        previewImage(cover_path, 0)
         cover_object_flag = 1
-    elif(path.endswith(".txt")):
-        previewText(path, 0)
+    elif(cover_path.endswith(".txt")):
+        previewText(cover_path, 0)
 cover_canvas.drop_target_register(tkinterdnd2.DND_FILES)
 cover_canvas.dnd_bind('<<Drop>>', cover_drop)
 
@@ -433,10 +445,11 @@ canvas.create_rectangle(
     fill="#F5F5F5",
     outline="#000066",
     dash=(4,4))
+
 # Cover rectangle text
-canvas.create_text(
-    418.0,
-    136.0,
+cover_canvas.create_text(
+    38.0,
+    80.0,
     anchor="nw",
     text="Upload or drag and drop\n          your file here",
     fill="#000066",

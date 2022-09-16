@@ -1,0 +1,6 @@
+README.md
+setup.py
+tkinterdnd2_pmgagne.egg-info/PKG-INFO
+tkinterdnd2_pmgagne.egg-info/SOURCES.txt
+tkinterdnd2_pmgagne.egg-info/dependency_links.txt
+tkinterdnd2_pmgagne.egg-info/top_level.txt

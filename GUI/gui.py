@@ -11,8 +11,10 @@ from pathlib import Path
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, filedialog
 from tkinter import *
 import tkinter as tk
+from turtle import bgcolor
 from PIL import Image, ImageTk
 from TkinterDnD2 import DND_FILES, TkinterDnD #need pip install
+import tkinterdnd2
 import os
 #from TkinterDnD2 import DND_FILES, TkinterDnD
 
@@ -46,7 +48,7 @@ def decoder_check_for_error():
 
     #This function is use to preview images:
     ##params {path - the file path to obtain image}
-    ##params {objectFlag - 0 for cover Object, 1 for payload, 2 for stego}   
+    ##params {objectFlag - 0 for cover Object, 1 for payload, 2 for stego, 3 for output}   
 def previewImage(path, objectFlag):
     if (objectFlag == 0):
         #Creates a label to display image on
@@ -89,6 +91,20 @@ def previewImage(path, objectFlag):
         selected_image = ImageTk.PhotoImage(selected_image)
         #config the size of image to label (CHANGE the height and width below to alter the size)
         raw_image_label.config(image=selected_image, height=(624-402), width= (279-38))
+        raw_image_label.image = selected_image
+    elif (objectFlag == 3): #Use objectflag 3 to preview output objects
+        #Creates a label to display image on
+        raw_image_label = Label(window, text="Select Raw Image", height=(712-359), width=(471-70), relief="solid",bg="#FFFFFF")
+        raw_image_label.place(x=70, y=359)
+        #Open image -> calculate optimal size to resize -> resize
+        selected_image = Image.open(path)
+        max_width = (471-70)
+        aspect_ratio = max_width / float(selected_image.size[0])
+        max_height = int((float(selected_image.size[1]) * float(aspect_ratio)))
+        selected_image = selected_image.resize((max_width, max_height), Image.ANTIALIAS)
+        selected_image = ImageTk.PhotoImage(selected_image)
+        #config the size of image to label (CHANGE the height and width below to alter the size)
+        raw_image_label.config(image=selected_image, height=(712-359), width= (471-70))
         raw_image_label.image = selected_image
 
 
@@ -182,7 +198,8 @@ def show_selected_lsb(choice):
     print("Option selected: "+choice)
 
 
-window = Tk()
+# window = Tk()
+window = tkinterdnd2.Tk()
 window.title("Best stego encoder thing in the market")
 
 window.geometry("1004x796")
@@ -358,7 +375,16 @@ payload_browse_button.place(
     width=95,
     height=30
 )
-
+################################################################################
+#Create an invisible canvas for Drag and drop
+# cover_canvas = Canvas(window, width=(279-43),height=(624-412), relief='sunken')
+# cover_canvas.create_text(384,60,text="File here",anchor = NW)
+# cover_canvas.place(x=384,y=60)
+# #define the drop evnt
+# def cover_drop(event):
+#     print("hi")
+# cover_canvas.drop_target_register(tkinterdnd2.DND_FILES)
+# cover_canvas.dnd_bind('<<Drop>>', cover_drop)
 # Cover rectangle
 canvas.create_rectangle(
     379.0,
@@ -368,10 +394,6 @@ canvas.create_rectangle(
     fill="#F5F5F5",
     outline="#000066",
     dash=(4,4))
-
-
-
-
 
 # Cover rectangle text
 canvas.create_text(
@@ -383,7 +405,6 @@ canvas.create_text(
     font=("Inter Regular", 14 * -1)
 )
 
-#create an invisible label over cover rectangle
 
 # Cover Browse button
 button_image_4 = PhotoImage(
@@ -401,6 +422,8 @@ cover_browse_button.place(
     height=30
 )
 
+
+##################################################################################
 # Stego Rectangle
 canvas.create_rectangle(
     688.0,

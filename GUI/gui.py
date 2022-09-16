@@ -6,6 +6,7 @@
 from asyncio.windows_events import ERROR_CONNECTION_ABORTED
 from distutils.util import convert_path
 from pathlib import Path
+from pickle import GLOBAL
 
 # from tkinter import *
 # Explicit imports to satisfy Flake8
@@ -36,9 +37,9 @@ def relative_to_assets(path: str) -> Path:
 def encoder_check_for_error():
     if(payload_flag == 1 and cover_object_flag == 1):
         tk.messagebox.showinfo(title="Success!", message="Encoding successful!") # Success message pop up
-    elif (payload_flag == 1 and cover_object_flag == 0):
+    elif(payload_flag == 1 and cover_object_flag == 0):
         tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Cover object missing.") # Error message pop up
-    elif (payload_flag == 0 and cover_object_flag == 1):
+    elif(payload_flag == 0 and cover_object_flag == 1):
         tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Payload missing.") # Error message pop up
     else:
         tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Payload and cover object missing.") # Error message pop up
@@ -54,6 +55,7 @@ def decoder_check_for_error():
     ##params {path - the file path to obtain image}
     ##params {objectFlag - 0 for cover Object, 1 for payload, 2 for stego, 3 for output}   
 def previewImage(path, objectFlag):
+    print("object flag: " + str(objectFlag))
     if (objectFlag == 0):
         #Creates a label to display image on
         raw_image_label = Label(window, text="Select Raw Image", height=(624-379), width=(279-56), relief="solid",bg="#FFFFFF")
@@ -145,10 +147,6 @@ def previewText(path, objectFlag):
                     line = line.strip()
                     tbox_output.insert("end", f"{line}\n")
 
-
-
-    
-
 def previewVideo(path):
     videoplayer = TkinterVideo(master=window, scaled=True)
     videoplayer.load(path)
@@ -157,6 +155,7 @@ def previewVideo(path):
 
 #function to open file explorer (and selecting file in file explorer) for cover
 def open_file_explorer_cover():
+    global cover_object_flag
     rep = filedialog.askopenfilenames(
     	parent=window,
     	initialdir=os.path.join(os.path.join(os.path.expanduser('~')), 'Desktop'), # set path to open desktop in file explorer
@@ -184,6 +183,7 @@ def open_file_explorer_cover():
 
 #function to open file explorer (and selecting file in file explorer) for payload
 def open_file_explorer_payload():
+    global payload_flag
     rep = filedialog.askopenfilenames(
     	parent=window,
     	initialdir=os.path.join(os.path.join(os.path.expanduser('~')), 'Desktop'), # set path to open desktop in file explorer
@@ -211,6 +211,7 @@ def open_file_explorer_payload():
 
 #function to open file explorer (and selecting file in file explorer) for stego
 def open_file_explorer_stego():
+    global stego_flag
     rep = filedialog.askopenfilenames(
     	parent=window,
     	initialdir=os.path.join(os.path.join(os.path.expanduser('~')), 'Desktop'), # set path to open desktop in file explorer
@@ -404,29 +405,15 @@ canvas.create_text(
     font=("Inter Regular", 14 * -1)
 )
 
-# Payload Browse button
-button_image_3 = PhotoImage(
-    file=relative_to_assets("button_3.png"))
-payload_browse_button = Button(
-    image=button_image_3,
-    borderwidth=0,
-    highlightthickness=0,
-    command=open_file_explorer_payload
-)
-payload_browse_button.place(
-    x=146.0,
-    y=215.0,
-    width=95,
-    height=30
-)
-################################################################################
 
-#Create an invisible canvas for Drag and drop
+################################################################################
+#Create an invisible canvas for Drag and drop for cover object
 cover_canvas = Canvas(window, width=(279-43),height=(624-412), relief='sunken', bg="#F5F5F5")
 cover_canvas.place(x=384,y=60)
 
-#define the drop evnt
+#define the drop event
 def cover_drop(event):
+    global cover_object_flag
     cover_path = event.data
     if(cover_path.endswith(".png")):
         previewImage(cover_path, 0)
@@ -456,9 +443,6 @@ cover_canvas.create_text(
     font=("Inter Regular", 14 * -1)
 )
 
-
-
-
 # Cover Browse button
 button_image_4 = PhotoImage(
     file=relative_to_assets("button_4.png"))
@@ -477,6 +461,23 @@ cover_browse_button.place(
 
 
 ##################################################################################
+#Create an invisible canvas for Drag and drop for stego
+stego_canvas = Canvas(window, width=(279-43),height=(624-412), relief='sunken', bg="#F5F5F5")
+stego_canvas.place(x=690,y=60)
+
+#define the drop event
+def stego_drop(event):
+    global stego_flag
+    stego_path = event.data
+    if(stego_path.endswith(".png")):
+        previewImage(stego_path, 2)
+        stego_flag = 1
+    elif(stego_path.endswith(".txt")):
+        previewText(stego_path, 2)
+stego_canvas.drop_target_register(tkinterdnd2.DND_FILES)
+stego_canvas.dnd_bind('<<Drop>>', stego_drop)
+
+
 # Stego Rectangle
 canvas.create_rectangle(
     688.0,
@@ -488,9 +489,9 @@ canvas.create_rectangle(
     dash=(4,4))
 
 # Stego rectangle text
-canvas.create_text(
-    727.0,
-    136.0,
+stego_canvas.create_text(
+    38.0,
+    80.0,
     anchor="nw",
     text="Upload or drag and drop\n          your file here",
     fill="#000066",
@@ -509,6 +510,59 @@ stego_browse_button = Button(
 )
 stego_browse_button.place(
     x=764.0,
+    y=215.0,
+    width=95,
+    height=30
+)
+
+#############################################################################3
+#Create an invisible canvas for Drag and drop for payload
+payload_canvas = Canvas(window, width=(279-43),height=(624-412), relief='sunken', bg="#F5F5F5")
+payload_canvas.place(x=74,y=60)
+
+#define the drop event
+def payload_drop(event):
+    global payload_flag
+    payload_path = event.data
+    if(payload_path.endswith(".png")):
+        previewImage(payload_path, 1)
+        payload_flag = 1
+    elif(payload_path.endswith(".txt")):
+        previewText(payload_path, 1)
+payload_canvas.drop_target_register(tkinterdnd2.DND_FILES)
+payload_canvas.dnd_bind('<<Drop>>', payload_drop)
+
+# payload rectangle
+canvas.create_rectangle(
+    379.0,
+    56.0,
+    624.0,
+    279.0,
+    fill="#F5F5F5",
+    outline="#000066",
+    dash=(4,4))
+
+# payload rectangle text
+payload_canvas.create_text(
+    38.0,
+    80.0,
+    anchor="nw",
+    text="Upload or drag and drop\n          your file here",
+    fill="#000066",
+    font=("Inter Regular", 14 * -1)
+)
+
+# Payload Browse button
+button_image_3 = PhotoImage(
+    file=relative_to_assets("button_3.png"))
+payload_browse_button = Button(
+    image=button_image_3,
+    borderwidth=0,
+    highlightthickness=0,
+    command=open_file_explorer_payload
+)
+payload_browse_button.place(
+    x=146.0,
     y=215.0,
     width=95,
     height=30

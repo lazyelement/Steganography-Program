@@ -146,15 +146,15 @@ def open_file_explorer_cover():
     try:
         cover_path = rep[0]
         print(cover_path)
-        if(cover_path.endswith(".png")):
+        if(cover_path.endswith(".png") or cover_path.endswith(".jpg") or cover_path.endswith(".bmp")):
             #Call function to preview image & change cover flag to 1
             previewImage(cover_path, 0)
             cover_object_flag = 1
-        elif(cover_path.endswith(".txt")):
+        elif(cover_path.endswith(".txt") or cover_path.endswith(".docx") or cover_path.endswith(".xls")):
             #Call function to preview text & change cover flag to 1
             previewText(cover_path,0)
             cover_object_flag = 1
-        elif(cover_path.endswith(".mp4")):
+        elif(cover_path.endswith(".mp4") or cover_path.endswith(".mp3") or cover_path.endswith(".wav")):
             previewVideo(cover_path)
             cover_object_flag = 1
 
@@ -174,15 +174,15 @@ def open_file_explorer_payload():
     try:
         payload_path = rep[0]
         print(payload_path)
-        if(payload_path.endswith(".png")):
+        if(payload_path.endswith(".png") or payload_path.endswith(".jpg") or payload_path.endswith(".bmp")):
             #Call function to preview image & change payload flag to 1
             previewImage(payload_path, 1)
             payload_flag = 1
-        elif(payload_path.endswith(".txt")):
+        elif(payload_path.endswith(".txt") or payload_path.endswith(".docx") or payload_path.endswith(".xls")):
             #Call function to preview text & change cover flag to 1
             previewText(payload_path, 1)
             payload_flag = 1
-        elif(payload_path.endswith(".mp4")):
+        elif(payload_path.endswith(".mp4") or payload_path.endswith(".mp3") or payload_path.endswith(".wav")):
             previewVideo(payload_path)
             payload_flag = 1
 
@@ -202,15 +202,15 @@ def open_file_explorer_stego():
     try:
         stego_path = rep[0]
         print(stego_path)
-        if(stego_path.endswith(".png")):
+        if(stego_path.endswith(".png") or stego_path.endswith(".jpg") or stego_path.endswith(".bmp")):
             #Call function to preview image & change stego flag to 1
             previewImage(stego_path, 2)
             stego_flag = 1
-        elif(stego_path.endswith(".txt")):
+        elif(stego_path.endswith(".txt") or stego_path.endswith(".docx") or stego_path.endswith(".xls")):
             #Call function to preview text & change cover flag to 1
             previewText(stego_path, 2)
             stego_flag = 1
-        elif(stego_path.endswith(".mp4")):
+        elif(stego_path.endswith(".mp4") or stego_path.endswith(".mp3") or stego_path.endswith(".wav")):
             previewVideo(stego_path)
             stego_flag = 1
 
@@ -376,11 +376,16 @@ cover_canvas.place(x=384,y=60)
 def cover_drop(event):
     global cover_object_flag
     cover_path = event.data
-    if(cover_path.endswith(".png")):
+    if(cover_path.endswith(".png") or cover_path.endswith(".jpg") or cover_path.endswith(".bmp")):
         previewImage(cover_path, 0)
         cover_object_flag = 1
-    elif(cover_path.endswith(".txt")):
+    elif(cover_path.endswith(".txt") or cover_path.endswith(".docx") or cover_path.endswith(".xls")):
         previewText(cover_path, 0)
+        cover_object_flag = 1
+    elif(cover_path.endswith(".mp4") or cover_path.endswith(".mp3") or cover_path.endswith(".wav")):
+        previewVideo(cover_path, 0)
+        cover_object_flag = 1
+
 cover_canvas.drop_target_register(tkinterdnd2.DND_FILES)
 cover_canvas.dnd_bind('<<Drop>>', cover_drop)
 
@@ -430,11 +435,15 @@ stego_canvas.place(x=690,y=60)
 def stego_drop(event):
     global stego_flag
     stego_path = event.data
-    if(stego_path.endswith(".png")):
+    if(stego_path.endswith(".png") or stego_path.endswith(".jpg") or stego_path.endswith(".bmp")):
         previewImage(stego_path, 2)
         stego_flag = 1
-    elif(stego_path.endswith(".txt")):
+    elif(stego_path.endswith(".txt") or stego_path.endswith(".docx") or stego_path.endswith(".xls")):
         previewText(stego_path, 2)
+        stego_flag = 1
+    elif(stego_path.endswith(".mp4") or stego_path.endswith(".mp3") or stego_path.endswith(".wav")):
+        previewVideo(stego_path, 2)
+        stego_flag = 1
 stego_canvas.drop_target_register(tkinterdnd2.DND_FILES)
 stego_canvas.dnd_bind('<<Drop>>', stego_drop)
 
@@ -485,11 +494,14 @@ payload_canvas.place(x=74,y=60)
 def payload_drop(event):
     global payload_flag
     payload_path = event.data
-    if(payload_path.endswith(".png")):
+    if(payload_path.endswith(".png") or payload_path.endswith(".jpg") or payload_path.endswith(".bmp")):
         previewImage(payload_path, 1)
         payload_flag = 1
-    elif(payload_path.endswith(".txt")):
+    elif(payload_path.endswith(".txt") or payload_path.endswith(".docx") or payload_path.endswith(".xls")):
         previewText(payload_path, 1)
+    elif(payload_path.endswith(".mp4") or payload_path.endswith(".mp3") or payload_path.endswith(".wav")):
+        previewVideo(payload_path)
+        payload_flag = 1
 payload_canvas.drop_target_register(tkinterdnd2.DND_FILES)
 payload_canvas.dnd_bind('<<Drop>>', payload_drop)
 

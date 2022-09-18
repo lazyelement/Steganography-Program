@@ -18,6 +18,7 @@ from PIL import Image, ImageTk
 # from TkinterDnD2 import DND_FILES, TkinterDnD #need pip install
 import tkinterdnd2
 import os
+import docx2txt # pip install docx2txt
 #from TkinterDnD2 import DND_FILES, TkinterDnD
 
 OUTPUT_PATH = Path(__file__).parent
@@ -102,31 +103,47 @@ def previewText(path, objectFlag):
     if(objectFlag == 0):
         tbox_coverobj = tk.Text(window, background="#ffffff")
         tbox_coverobj.place(x=379,y=56,width=(279-30),height=(624-400))
-        with open(path, "r") as file:
-            for line in file:
-                    line = line.strip()
-                    tbox_coverobj.insert("end", f"{line}\n")
+        if path.endswith(".docx"):
+            text = docx2txt.process(path)
+            tbox_coverobj.insert(1.0,text)
+        else:    
+            with open(path, "r") as file:
+                for line in file:
+                        line = line.strip()
+                        tbox_coverobj.insert("end", f"{line}\n")
     elif(objectFlag == 1):
         tbox_payload = tk.Text(window, background="#ffffff")
         tbox_payload.place(x=70,y=56,width=(279-30),height=(624-400))
-        with open(path, "r") as file:
-            for line in file:
-                    line = line.strip()
-                    tbox_payload.insert("end", f"{line}\n")
+        if path.endswith(".docx"):
+            text = docx2txt.process(path)
+            tbox_payload.insert(1.0,text)
+        else:    
+            with open(path, "r") as file:
+                for line in file:
+                        line = line.strip()
+                        tbox_payload.insert("end", f"{line}\n")
     elif(objectFlag == 2):
-        tbox_payload = tk.Text(window, background="#ffffff")
-        tbox_payload.place(x=688,y=56,width=(279-30),height=(624-400))
-        with open(path, "r") as file:
-            for line in file:
-                    line = line.strip()
-                    tbox_payload.insert("end", f"{line}\n")
+        tbox_stego = tk.Text(window, background="#ffffff")
+        tbox_stego.place(x=688,y=56,width=(279-30),height=(624-400))
+        if path.endswith(".docx"):
+            text = docx2txt.process(path)
+            tbox_stego.insert(1.0,text)
+        else:    
+            with open(path, "r") as file:
+                for line in file:
+                        line = line.strip()
+                        tbox_stego.insert("end", f"{line}\n")
     elif(objectFlag == 3):
         tbox_output = tk.Text(window, background="#ffffff")
         tbox_output.place(x=70,y=359,width=(471-70),height=(712-359))
-        with open(path, "r") as file:
-            for line in file:
-                    line = line.strip()
-                    tbox_output.insert("end", f"{line}\n")
+        if path.endswith(".docx"):
+            text = docx2txt.process(path)
+            tbox_output.insert(1.0,text)
+        else:    
+            with open(path, "r") as file:
+                for line in file:
+                        line = line.strip()
+                        tbox_output.insert("end", f"{line}\n")
 
 def previewVideo(path):
     videoplayer = TkinterVideo(master=window, scaled=True)

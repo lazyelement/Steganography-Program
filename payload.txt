@@ -1,1 +1,1 @@
-hi
+Hello World this is my cover text file.

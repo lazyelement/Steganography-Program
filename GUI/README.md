@@ -1,3 +1,7 @@
+# How to install docx2txt
+
+pip install docx2txt
+
 # tkinterdnd2
 
 Tkinter native drag and drop support for windows, unix and Mac OSX.

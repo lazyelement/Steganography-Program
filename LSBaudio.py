@@ -53,11 +53,14 @@ def encoding(payload,audio_file):
     string = payload + int((len(audio_bytearray)-(len(payload)*8*8))/8) *'#'
     #Converting text to binary list
     binary_list = list(map(int, ''.join([bin(ord(i)).lstrip('0b').rjust(8,'0') for i in string])))
+    print(binary_list)
 
     #Actual encoding
     #LSB Replacement of the audio data by one bit from audio_bytearray
     for i, bit in enumerate(binary_list):
         audio_bytearray[i] = (audio_bytearray[i] & 254) | bit
+        audio_bytearray[i+1] = (audio_bytearray[i+1] & 254) | binary_list[bit+1]
+        audio_bytearray[i+2] = (audio_bytearray[i+2] & 254) | binary_list[bit+2]
     #Get the replaced bytes
     frame_replaced = bytes(audio_bytearray)
 
@@ -74,6 +77,9 @@ def decoding():
 
     #Extract the LSB of each byte
     extracted_LSB = [audio_bytearray[i] & 1 for i in range(len(audio_bytearray))]
+    # print(audio_bytearray[1])
+    # extracted_LSB_1 = [audio_bytearray[i+1] & 1 for i in range(len(audio_bytearray))]
+    # extracted_LSB = extracted_LSB + extracted_LSB_1
     #Convert byte array back to string
     embedded_text = "".join(chr(int("".join(map(str,extracted_LSB[i:i+8])),2)) for i in range(0,len(extracted_LSB),8))
     #Cut off at the filler characters
@@ -90,3 +96,4 @@ payload = "payload.txt"
 audio_file = "song_embedded.mp3"
 encoding(payload,audio_file)
 decoding()
+

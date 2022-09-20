@@ -156,26 +156,78 @@ def vp_start_gui():
     ##params {objectFlag - 0 for cover Object, 1 for payload, 2 for stego, 3 for output}
     def previewVideo(path,objectFlag):
         if(objectFlag == 0):
+            global videoplayer_coverobj
             videoplayer_coverobj = TkinterVideo(master=window, scaled=True)
             videoplayer_coverobj.load(r"{}".format(path))
             videoplayer_coverobj.place(x=379,y=56,width=(279-30),height=(624-400))
             videoplayer_coverobj.play()
         elif(objectFlag == 1):
+            global videoplayer_payload
             videoplayer_payload = TkinterVideo(master=window, scaled=True)
             videoplayer_payload.load(r"{}".format(path))
             videoplayer_payload.place(x=70,y=56,width=(279-30),height=(624-400))
             videoplayer_payload.play()
             # Add play pause buttons here
         elif(objectFlag == 2):
+            global videoplayer_stego
             videoplayer_stego = TkinterVideo(master=window, scaled=True)
             videoplayer_stego.load(r"{}".format(path))
             videoplayer_stego.place(x=688,y=56,width=(279-30),height=(624-400))
             videoplayer_stego.play()
         elif(objectFlag == 3):
+            global videoplayer_output
             videoplayer_output = TkinterVideo(master=window, scaled=True)
             videoplayer_output.load(r"{}".format(path))
             videoplayer_output.place(x=70,y=359,width=(471-70),height=(712-359))
             videoplayer_output.play()
+
+    # Play videdo for cover object
+    def playAgain_coverobj():
+        global videoplayer_coverobj
+        print("Playing video")
+        videoplayer_coverobj.play()
+    
+    # Pause video for cover object
+    def pauseVideo_coverobj():
+        global videoplayer_coverobj
+        print("Pausing video")
+        videoplayer_coverobj.pause()
+
+    # Play videdo for payload
+    def playAgain_payload():
+        global videoplayer_payload
+        print("Playing video")
+        videoplayer_payload.play()
+    
+    # Pause video for payload
+    def pauseVideo_payload():
+        global videoplayer_payload
+        print("Pausing video")
+        videoplayer_payload.pause()
+
+    # Play videdo for stego
+    def playAgain_stego():
+        global videoplayer_stego
+        print("Playing video")
+        videoplayer_stego.play()
+    
+    # Pause video for stego
+    def pauseVideo_stego():
+        global videoplayer_stego
+        print("Pausing video")
+        videoplayer_stego.pause()
+
+    # Play videdo for output
+    def playAgain_output():
+        global videoplayer_output
+        print("Playing video")
+        videoplayer_output.play()
+    
+    # Pause video for output
+    def pauseVideo_output():
+        global videoplayer_output
+        print("Pausing video")
+        videoplayer_output.pause()
 
     #function to open file explorer (and selecting file in file explorer) for cover
     def open_file_explorer_cover():
@@ -422,6 +474,7 @@ def vp_start_gui():
         cover_path = event.data
         if(cover_path.endswith(".png") or cover_path.endswith(".jpg") or cover_path.endswith(".bmp")):
             previewImage(cover_path, 0)
+            print(cover_path)
             cover_object_flag = 1
         elif(cover_path.endswith(".txt") or cover_path.endswith(".docx") or cover_path.endswith(".xls")):
             previewText(cover_path, 0)
@@ -610,7 +663,7 @@ def vp_start_gui():
         image=button_image_7,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: print("button_7 clicked"),
+        command=lambda: playAgain_stego(),
         relief="flat"
     )
     button_7.place(
@@ -626,7 +679,7 @@ def vp_start_gui():
         image=button_image_8,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: print("button_8 clicked"),
+        command=lambda: pauseVideo_stego(),
         relief="flat"
     )
     button_8.place(
@@ -643,7 +696,7 @@ def vp_start_gui():
         image=button_image_9,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: print("button_9 clicked"),
+        command=lambda: playAgain_payload(),
         relief="flat"
     )
     button_9.place(
@@ -659,12 +712,45 @@ def vp_start_gui():
         image=button_image_10,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: print("button_10 clicked"),
+        command=lambda: pauseVideo_payload(),
         relief="flat"
     )
     button_10.place(
         x=101.0,
         y=286.0,
+        width=24.0,
+        height=24.0
+    )
+
+    # Output play pause buttons
+    button_image_13 = PhotoImage(
+        file=relative_to_assets("button_9.png"))
+    button_13 = Button(
+        image=button_image_13,
+        borderwidth=0,
+        highlightthickness=0,
+        command=lambda: playAgain_output(),
+        relief="flat"
+    )
+    button_13.place(
+        x=70.0,
+        y=718.0,
+        width=24.0,
+        height=24.0
+    )
+
+    button_image_14 = PhotoImage(
+        file=relative_to_assets("button_10.png"))
+    button_14 = Button(
+        image=button_image_14,
+        borderwidth=0,
+        highlightthickness=0,
+        command=lambda: pauseVideo_output(),
+        relief="flat"
+    )
+    button_14.place(
+        x=101.0,
+        y=718.0,
         width=24.0,
         height=24.0
     )
@@ -676,7 +762,7 @@ def vp_start_gui():
         image=button_image_11,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: print("button_11 clicked"),
+        command=lambda: playAgain_coverobj(),
         relief="flat"
     )
     button_11.place(
@@ -692,9 +778,9 @@ def vp_start_gui():
         image=button_image_12,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: print("button_12 clicked"),
+        command=lambda: pauseVideo_coverobj(),
         relief="flat",
-        state=DISABLED
+        #state=DISABLED
     )
     button_12.place(
         x=411.0,

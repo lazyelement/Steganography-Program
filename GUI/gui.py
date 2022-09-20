@@ -23,6 +23,7 @@ import docx2txt # pip install docx2txt
 from tkinter.filedialog import askopenfile
 from tkVideoPlayer import TkinterVideo # pip install tkvideoplayer
 #from TkinterDnD2 import DND_FILES, TkinterDnD
+import pygame   #pip install pygame
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path("./assets") 
@@ -33,11 +34,24 @@ stego_flag = 0
 payload_path = ""
 cover_path = ""
 stego_path = ""
+path_output = ""
+audio_paused_cover = False
+audio_paused_payload = False
+audio_paused_stego = False
+audio_paused_output = False
+
+#init audio player
+pygame.mixer.init()                     
+#Set each audio channel for the various objects, so they can play/pause individually
+cover_audio = pygame.mixer.Channel(0)
+payload_audio = pygame.mixer.Channel(1)
+stego_audio = pygame.mixer.Channel(2)
+output_audio = pygame.mixer.Channel(3)
 
 
 def vp_start_gui():
     global window
-
+ 
     def relative_to_assets(path: str) -> Path:
         return ASSETS_PATH / Path(path)
 
@@ -180,58 +194,145 @@ def vp_start_gui():
             videoplayer_output.load(r"{}".format(path))
             videoplayer_output.place(x=70,y=359,width=(471-70),height=(712-359))
             videoplayer_output.play()
+    
+    def previewSound(path, objectFlag):
+        if(objectFlag == 0):
+            cover_listb = tk.Listbox(window, selectmode=tk.SINGLE)
+            cover_listb.place(x=379,y=56,width=(279-30),height=(624-400))
+            cover_listb.insert("end", path)
+        elif(objectFlag == 1):
+            payload_listb = tk.Listbox(window, selectmode=tk.SINGLE)
+            payload_listb.place(x=70,y=56,width=(279-30),height=(624-400))
+            payload_listb.insert("end", path)
+        elif(objectFlag == 2):
+            stego_listb = tk.Listbox(window, selectmode=tk.SINGLE)
+            stego_listb.place(x=688,y=56,width=(279-30),height=(624-400))
+            stego_listb.insert("end", path)
+        elif(objectFlag == 3):
+            output_listb = tk.Listbox(window, selectmode=tk.SINGLE)
+            output_listb.place(x=70,y=359,width=(471-70),height=(712-359))
+            output_listb.insert("end", path)
 
-    # Play videdo for cover object
+    
+            
+
+    # Play video and audio for cover object
     def playAgain_coverobj():
         global videoplayer_coverobj
-        print("Playing video")
-        videoplayer_coverobj.play()
+        global cover_path
+        global audio_paused_cover
+        global cover_audio
+        print("coverpath is", cover_path)
+        if(cover_path.endswith(".mp3") and audio_paused_cover == False): #if audio is unpaused, play it from the start if play button is hit
+            audio = pygame.mixer.Sound(cover_path)
+            cover_audio.play(audio, loops=0)
+        elif(cover_path.endswith(".mp3") and audio_paused_cover == True): #if audio is paused, unpause it
+            cover_audio.unpause()
+            audio_paused_cover = False
+        else:
+            print("Playing video")
+            videoplayer_coverobj.play()
     
-    # Pause video for cover object
+    # Pause video and audio for cover object
     def pauseVideo_coverobj():
         global videoplayer_coverobj
-        print("Pausing video")
-        videoplayer_coverobj.pause()
+        global cover_path
+        global audio_paused_cover
+        if(cover_path.endswith(".mp3")):
+            audio_paused_cover = True
+            cover_audio.pause()
+        else:
+            print("Pausing video")
+            videoplayer_coverobj.pause()
 
-    # Play videdo for payload
+    # Play video and audio for payload
     def playAgain_payload():
         global videoplayer_payload
-        print("Playing video")
-        videoplayer_payload.play()
+        global payload_path
+        global audio_paused_payload
+        global payload_audio
+        if(payload_path.endswith(".mp3") and audio_paused_payload == False):
+            audio = pygame.mixer.Sound(payload_path)
+            payload_audio.play(audio, loops=0)
+        elif(payload_path.endswith(".mp3") and audio_paused_payload == True):
+            payload_audio.unpause()
+            audio_paused_payload = False
+        else:
+            print("Playing video")
+            videoplayer_payload.play()
     
-    # Pause video for payload
+    # Pause video and audio for payload
     def pauseVideo_payload():
         global videoplayer_payload
-        print("Pausing video")
-        videoplayer_payload.pause()
+        global payload_path
+        global audio_paused_payload
+        if(payload_path.endswith(".mp3")):
+            audio_paused_payload = True
+            payload_audio.pause()
+        else:
+            print("Pausing video")
+            videoplayer_payload.pause()
 
-    # Play videdo for stego
+    # Play video and audio for stego
     def playAgain_stego():
         global videoplayer_stego
-        print("Playing video")
-        videoplayer_stego.play()
+        global stego_path
+        global audio_paused_stego
+        global stego_audio
+        if(stego_path.endswith(".mp3") and audio_paused_stego == False):
+            audio = pygame.mixer.Sound(stego_path)
+            stego_audio.play(audio, loops=0)
+        elif(stego_path.endswith(".mp3") and audio_paused_stego == True):
+            stego_audio.unpause()
+            audio_paused_stego = False
+        else:
+            print("Playing video")
+            videoplayer_stego.play()
     
-    # Pause video for stego
+    # Pause video and audio for stego
     def pauseVideo_stego():
         global videoplayer_stego
-        print("Pausing video")
-        videoplayer_stego.pause()
+        global stego_path
+        global audio_paused_stego
+        if(stego_path.endswith(".mp3")):
+            audio_paused_stego = True
+            stego_audio.pause()
+        else:
+            print("Pausing video")
+            videoplayer_stego.pause()
 
-    # Play videdo for output
+    # Play video and audio for output
     def playAgain_output():
         global videoplayer_output
-        print("Playing video")
-        videoplayer_output.play()
+        global path_output
+        global audio_paused_output
+        global output_audio
+        if(path_output.endswith(".mp3") and audio_paused_output == False):
+            audio = pygame.mixer.Sound(path_output)
+            output_audio.play(audio, loops=0)
+        elif(path_output.endswith(".mp3") and audio_paused_output == True):
+            output_audio.unpause()
+            audio_paused_output = False
+        else:
+            print("Playing video")
+            videoplayer_output.play()
     
-    # Pause video for output
+    # Pause video and audio for output
     def pauseVideo_output():
         global videoplayer_output
-        print("Pausing video")
-        videoplayer_output.pause()
+        global path_output
+        global audio_paused_output
+        if(path_output.endswith(".mp3")):
+            audio_paused_output = True
+            output_audio.pause()
+        else:
+            print("Pausing video")
+            videoplayer_output.pause()
 
     #function to open file explorer (and selecting file in file explorer) for cover
     def open_file_explorer_cover():
         global cover_object_flag
+        global cover_path
         rep = filedialog.askopenfilenames(
             parent=window,
             initialdir=os.path.join(os.path.join(os.path.expanduser('~')), 'Desktop'), # set path to open desktop in file explorer
@@ -249,8 +350,11 @@ def vp_start_gui():
                 #Call function to preview text & change cover flag to 1
                 previewText(cover_path, 0)
                 cover_object_flag = 1
-            elif(cover_path.endswith(".mp4") or cover_path.endswith(".mp3") or cover_path.endswith(".wav")):
+            elif(cover_path.endswith(".mp4") ):
                 previewVideo(cover_path, 0)
+                cover_object_flag = 1
+            elif(cover_path.endswith(".mp3") or cover_path.endswith(".wav")):
+                previewSound(cover_path, 0)
                 cover_object_flag = 1
 
         except IndexError:
@@ -260,6 +364,7 @@ def vp_start_gui():
     #function to open file explorer (and selecting file in file explorer) for payload
     def open_file_explorer_payload():
         global payload_flag
+        global payload_path
         rep = filedialog.askopenfilenames(
             parent=window,
             initialdir=os.path.join(os.path.join(os.path.expanduser('~')), 'Desktop'), # set path to open desktop in file explorer
@@ -277,8 +382,11 @@ def vp_start_gui():
                 #Call function to preview text & change cover flag to 1
                 previewText(payload_path, 1)
                 payload_flag = 1
-            elif(payload_path.endswith(".mp4") or payload_path.endswith(".mp3") or payload_path.endswith(".wav")):
+            elif(payload_path.endswith(".mp4")):
                 previewVideo(payload_path, 1)
+                payload_flag = 1
+            elif(payload_path.endswith(".mp3") or payload_path.endswith(".wav")):
+                previewSound(payload_path, 1)
                 payload_flag = 1
 
         except IndexError:
@@ -288,6 +396,7 @@ def vp_start_gui():
     #function to open file explorer (and selecting file in file explorer) for stego
     def open_file_explorer_stego():
         global stego_flag
+        global stego_path
         rep = filedialog.askopenfilenames(
             parent=window,
             initialdir=os.path.join(os.path.join(os.path.expanduser('~')), 'Desktop'), # set path to open desktop in file explorer
@@ -305,9 +414,11 @@ def vp_start_gui():
                 #Call function to preview text & change cover flag to 1
                 previewText(stego_path, 2)
                 stego_flag = 1
-            elif(stego_path.endswith(".mp4") or stego_path.endswith(".mp3") or stego_path.endswith(".wav")):
+            elif(stego_path.endswith(".mp4")):
                 previewVideo(stego_path, 2)
                 stego_flag = 1
+            elif(stego_path.endswith(".mp3") or stego_path.endswith(".wav")):
+                previewSound(stego_path,2)
 
         except IndexError:
             tk.messagebox.showerror(title="No file selected", message="No file selected") # Error message pop up
@@ -800,12 +911,20 @@ if __name__ == '__main__':
         global payload_path
         global cover_path
         global stego_path
+        global audio_paused_cover
+        global audio_paused_payload
+        global audio_paused_stego
+        global audio_paused_output
         payload_flag = 0
         cover_object_flag = 0
         stego_flag = 0
         payload_path = ""
         cover_path = ""
         stego_path = ""
+        audio_paused_cover = False
+        audio_paused_payload = False
+        audio_paused_stego = False
+        audio_paused_output = False
 
         # destroy window
         window.destroy()

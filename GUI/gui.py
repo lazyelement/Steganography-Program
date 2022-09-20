@@ -356,7 +356,7 @@ def vp_start_gui():
         relief="flat"
     )
     encode_button.place(
-        x=546.0,
+        x=535.0,
         y=586.0,
         width=155.0,
         height=70.0
@@ -597,7 +597,7 @@ def vp_start_gui():
         relief="flat"
     )
     reset_button.place(
-        x=830.0,
+        x=836.0,
         y=671.0,
         width=103.0,
         height=41.0

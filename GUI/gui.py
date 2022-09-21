@@ -325,8 +325,6 @@ def vp_start_gui():
     window.geometry("1004x796")
     window.configure(bg = "#FFFFFF")
 
-
-
     canvas = Canvas(
         window,
         bg = "#FFFFFF",
@@ -336,6 +334,10 @@ def vp_start_gui():
         highlightthickness = 0,
         relief = "ridge"
     )
+
+#    # Add image file and change background
+#    bg = tk.PhotoImage(file = relative_to_assets("Your_image.png"))
+#    canvas.create_image(10, 10, image = bg, anchor = NW)
 
     # "Payload" text
     canvas.place(x = 0, y = 0)
@@ -360,7 +362,7 @@ def vp_start_gui():
     # "Output" text
     canvas.create_text(
         233.0,
-        322.0,
+        332.0,
         anchor="nw",
         text="Output",
         fill="#000066",
@@ -811,4 +813,5 @@ if __name__ == '__main__':
         window.destroy()
         vp_start_gui()
 
+    # start initial instance
     vp_start_gui()

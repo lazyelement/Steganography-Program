@@ -590,9 +590,12 @@ def vp_start_gui():
         elif(cover_path.endswith(".txt") or cover_path.endswith(".docx") or cover_path.endswith(".xls")):
             previewText(cover_path, 0)
             cover_object_flag = 1
-        elif(cover_path.endswith(".mp4") or cover_path.endswith(".mp3") or cover_path.endswith(".wav")):
+        elif(cover_path.endswith(".mp4")):
             previewVideo(cover_path, 0)
             cover_object_flag = 1
+        elif(cover_path.endswith(".mp3") or cover_path.endswith(".wav")):
+                previewSound(cover_path, 0)
+                cover_object_flag = 1
 
     cover_canvas.drop_target_register(tkinterdnd2.DND_FILES)
     cover_canvas.dnd_bind('<<Drop>>', cover_drop)
@@ -643,6 +646,7 @@ def vp_start_gui():
     #define the drop event
     def stego_drop(event):
         global stego_flag
+        global stego_path
         stego_path = event.data
         if(stego_path.endswith(".png") or stego_path.endswith(".jpg") or stego_path.endswith(".bmp")):
             previewImage(stego_path, 2)
@@ -650,8 +654,11 @@ def vp_start_gui():
         elif(stego_path.endswith(".txt") or stego_path.endswith(".docx") or stego_path.endswith(".xls")):
             previewText(stego_path, 2)
             stego_flag = 1
-        elif(stego_path.endswith(".mp4") or stego_path.endswith(".mp3") or stego_path.endswith(".wav")):
+        elif(stego_path.endswith(".mp4")):
             previewVideo(stego_path, 2)
+            stego_flag = 1
+        elif(stego_path.endswith(".mp3") or stego_path.endswith(".wav")):
+            previewSound(stego_path, 2)
             stego_flag = 1
     stego_canvas.drop_target_register(tkinterdnd2.DND_FILES)
     stego_canvas.dnd_bind('<<Drop>>', stego_drop)
@@ -702,14 +709,18 @@ def vp_start_gui():
     #define the drop event
     def payload_drop(event):
         global payload_flag
+        global payload_path
         payload_path = event.data
         if(payload_path.endswith(".png") or payload_path.endswith(".jpg") or payload_path.endswith(".bmp")):
             previewImage(payload_path, 1)
             payload_flag = 1
         elif(payload_path.endswith(".txt") or payload_path.endswith(".docx") or payload_path.endswith(".xls")):
             previewText(payload_path, 1)
-        elif(payload_path.endswith(".mp4") or payload_path.endswith(".mp3") or payload_path.endswith(".wav")):
+        elif(payload_path.endswith(".mp4")):
             previewVideo(payload_path, 1)
+            payload_flag = 1
+        elif(payload_path.endswith(".mp3") or payload_path.endswith(".wav")):
+            previewSound(payload_path, 1)
             payload_flag = 1
     payload_canvas.drop_target_register(tkinterdnd2.DND_FILES)
     payload_canvas.dnd_bind('<<Drop>>', payload_drop)

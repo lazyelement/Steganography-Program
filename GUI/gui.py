@@ -174,26 +174,21 @@ def vp_start_gui():
             videoplayer_coverobj = TkinterVideo(master=window, scaled=True)
             videoplayer_coverobj.load(r"{}".format(path))
             videoplayer_coverobj.place(x=379,y=56,width=(279-30),height=(624-400))
-            videoplayer_coverobj.play()
         elif(objectFlag == 1):
             global videoplayer_payload
             videoplayer_payload = TkinterVideo(master=window, scaled=True)
             videoplayer_payload.load(r"{}".format(path))
             videoplayer_payload.place(x=70,y=56,width=(279-30),height=(624-400))
-            videoplayer_payload.play()
-            # Add play pause buttons here
         elif(objectFlag == 2):
             global videoplayer_stego
             videoplayer_stego = TkinterVideo(master=window, scaled=True)
             videoplayer_stego.load(r"{}".format(path))
             videoplayer_stego.place(x=688,y=56,width=(279-30),height=(624-400))
-            videoplayer_stego.play()
         elif(objectFlag == 3):
             global videoplayer_output
             videoplayer_output = TkinterVideo(master=window, scaled=True)
             videoplayer_output.load(r"{}".format(path))
             videoplayer_output.place(x=70,y=359,width=(471-70),height=(712-359))
-            videoplayer_output.play()
     
     def previewSound(path, objectFlag):
         if(objectFlag == 0):

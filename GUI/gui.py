@@ -39,6 +39,8 @@ audio_paused_cover = False
 audio_paused_payload = False
 audio_paused_stego = False
 audio_paused_output = False
+textbox_choice = "Cover Object"
+
 
 #init audio player
 pygame.mixer.init()                     
@@ -423,6 +425,22 @@ def vp_start_gui():
         choice = variable.get()
         print("Option selected: "+choice)
 
+    def show_selected_option_textbox(choice):
+        global textbox_choice
+        textbox_choice = variable.get()
+
+    #  get input for textbox & display
+    def retrieve_input():
+        global textbox_choice
+        inputValue=entry_2.get()
+        if(textbox_choice == "Cover Object"):
+            tbox_coverobj = tk.Text(window, background="#ffffff")
+            tbox_coverobj.place(x=379,y=56,width=(279-30),height=(624-400))
+            tbox_coverobj.insert("end", inputValue)
+        else:
+            tbox_payload = tk.Text(window, background="#ffffff")
+            tbox_payload.place(x=70,y=56,width=(279-30),height=(624-400))
+            tbox_payload.insert("end", inputValue)
 
     # window = Tk()
     window = tkinterdnd2.Tk()
@@ -483,6 +501,28 @@ def vp_start_gui():
         font=("Inter Regular", 14 * -1)
     )
 
+    # Text input Textbox
+    canvas.create_text(
+    533.0,
+    428.0,
+    anchor="nw",
+    text="Enter text for payload / cover object",
+    fill="#000066",
+    font=("Inter Regular", 14 * -1)
+    )
+
+    entry_2 = Entry(
+        bd=0,
+        bg="#D9D9D9",
+        highlightthickness=0
+    )
+    entry_2.place(
+        x=532.0,
+        y=449.0,
+        width=401.0,
+        height=25.0
+    )
+
     # "Cover" text
     canvas.create_text(
         445.0,
@@ -520,7 +560,7 @@ def vp_start_gui():
         height=70.0
     )
 
-    # Create Dropdown
+    # Create Dropdown for LSB
     OPTIONS = [i for i in range(0,8)]
     variable = StringVar(window)
     variable.set(OPTIONS[0]) # default value
@@ -528,6 +568,16 @@ def vp_start_gui():
     lsb_dropdown.place(
         x=533.0,
         y=387.0
+    )
+
+    # Create Dropdown for textbox
+    OPTIONS = ["Payload","Cover Object"]
+    variable = StringVar(window)
+    variable.set(OPTIONS[1]) # default value
+    lsb_dropdown = OptionMenu(window, variable, *OPTIONS,command=show_selected_option_textbox)
+    lsb_dropdown.place(
+        x=760.0,
+        y=480.0
     )
 
     # Decode button
@@ -545,6 +595,23 @@ def vp_start_gui():
         y=586.0,
         width=155.0,
         height=70.0
+    )
+
+    # Submit button
+    button_image_15 = PhotoImage(
+        file=relative_to_assets("button_13.png"))
+    button_15 = Button(
+        image=button_image_15,
+        borderwidth=0,
+        highlightthickness=0,
+        command=lambda: retrieve_input(),
+        relief="flat"
+    )
+    button_15.place(
+        x=880.0,
+        y=480.0,
+        width=55,
+        height=30
     )
 
     # Payload Rectangle
@@ -921,6 +988,7 @@ if __name__ == '__main__':
         global audio_paused_payload
         global audio_paused_stego
         global audio_paused_output
+        global textbox_choice
         payload_flag = 0
         cover_object_flag = 0
         stego_flag = 0
@@ -931,6 +999,7 @@ if __name__ == '__main__':
         audio_paused_payload = False
         audio_paused_stego = False
         audio_paused_output = False
+        textbox_choice = "Cover Object"
 
         # destroy window
         window.destroy()

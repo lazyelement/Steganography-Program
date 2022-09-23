@@ -125,12 +125,31 @@ def decode (encodedText, lsb):
     #print(len(payloadBin))
     print("payloadBin: (len:", len(payloadBin), ")", payloadBin)
 
+    # delimeter
+    delimeter = "%$&@"
+
+    # splitting by 8-bits  
+    allBytes = [payloadBin[i: i + 8] for i in range(0, len(payloadBin), 8)]  
+    # converting from bits to characters  
+    decodedData = ""  
+    for bytes in allBytes:  
+        decodedData += chr(int(bytes, 2))  
+        # checking if we have reached the delimiter which is "%$&@"  
+        if decodedData[-4:] == delimeter:  
+            break
+    
+    print("Secret data with delimeter:", decodedData)
+    
+    payloadTxt = decodedData.rsplit(delimeter, 1)[0]
+    print("payload (secret text):",payloadTxt)
+    return payloadTxt
+    '''
     while len(payloadBin) % 8 != 0:
-        payloadBin += "0"
+        payloadBin -= "0"
     
     #print(payloadBin)
     #print(len(payloadBin))
-    print("payloadBin: (len:", len(payloadBin), ")", payloadBin)
+    print("(divisible by 8) payloadBin: (len:", len(payloadBin), ")", payloadBin)
 
     # change payloadBin to ASCII - this will be together with the delimeter
     payloadStr = binToStr(payloadBin)
@@ -141,6 +160,7 @@ def decode (encodedText, lsb):
     payloadTxt = payloadStr.rsplit(delimeter, 1)[0]
     print("payload (secret text): ",payloadTxt)
     return payloadTxt
+    '''
 
 def openTxtFile(fileName):
     f = open(fileName, "r")
@@ -154,13 +174,23 @@ docAsCover = "Hello. My name is Nur Farah Nadiah! I love burger! :)"
 secretData = "password is 4321ABC"
 
 cover = "cheeseBurgerme"
-payload = "secret"
+#payload = "secret"
 
 mate = "cheeseburger"
 hide = "hello"
 
 
-encode(docAsCover, "h", 1)
+#encode(docAsCover, "h", 1)
 
-encodedText = "Hemlo. Lx o`le ir Otr!F`r`i Naeh`i  H lnve burger! :)"
-decode(encodedText, 1)
+#encodedText = "Hemlo. Lx o`le ir Otr!F`r`i Naeh`i  H lnve burger! :)"
+#decode(encodedText, 1)
+
+encodedText = "HELLO THERE THIS IS A TEST TEXT FILE I dont know what else to type in here to make this file bigger so here i am rambling and typing nonsense"
+
+payload = "No"
+
+encode(encodedText, payload, 1)
+
+decodeThis= "HELLO!UHDSE UIIS HS @!TERT!TDYT FHMD I!dnot jnnv what else to type in here to make this file bigger so here i am rambling and typing nonsense"
+
+decode(decodeThis,1)

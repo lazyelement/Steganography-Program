@@ -1,0 +1,89 @@
+Apple Terms And Condition 
+
+These terms of sale create a contract between you and Apple (the ‘Agreement’). Please read the Agreement carefully. To confirm your understanding and acceptance of the Agreement, click ‘Agree’.
+
+Apple Distribution International Ltd. (‘Apple’) is the provider of the Volume Content Service, which (a) for the App Store, permits approved businesses and educational institutions to purchase App Store Content in bulk solely for distribution to, and use by, persons employed by or affiliated with the institution, such as contractors, employees, agents and, in the case of educational institutions, enrolled students authorised by you in accordance with the Apple Media Services Terms and Conditions, or (b) for Apple Books, permits either (i) approved educational institutions that are schools or school districts (excluding without limitation libraries) to purchase Apple Books Content in bulk, solely for distribution to, and use by, persons who are either employees, faculty or teaching assistants (regardless of whether they are directly employed by the institution) at the institution or registered as students at the institution, or (ii) approved institutions solely for distribution to, and use by, persons employed by or affiliated with the institution, such as contractors, employees and agents, in accordance with the Apple Media Services Terms and Conditions, as applicable. Such App Store Content and Apple Books Content purchased in bulk are collectively defined as ‘Volume Content’. The end users affiliated with your institution to which you distribute the Volume Content, including without limitation accounts created as Managed Apple IDs (‘MAIDs’), are collectively defined as ‘Authorised End Users’. You agree that your use of the Volume Content Service and the Volume Content will be subject to these terms (‘Volume Content Terms’ formerly known as the ‘Volume Purchase Programme Terms’ or the ‘VPP Terms’), as well as the Apple Media Services Terms and Conditions (https://www.apple.com/legal/internet-services/itunes/), which are hereby incorporated by reference (collectively, ‘Terms’). In the event of any conflict or inconsistency, the Volume Content Terms shall control.
+
+VOLUME CONTENT SERVICE APPLE ID
+
+You agree that you will only use the Volume Content Service-specific Apple ID (‘Volume Content Apple ID’) or appropriately privileged MAID for the purpose of purchasing, managing and distributing Volume Content from the Volume Content Service. You agree to provide accurate information in order to set up your Volume Content Apple ID or MAID, such as company name, physical address, D-U-N-S number, corporate payment information, tax registration number (where applicable) or other information as requested.
+
+Your Volume Content Apple ID (as opposed to your password, which you should not disclose to anyone) will be used by content providers to verify your account for custom content distribution through the Volume Content Service.
+
+TERRITORY SALES ONLY
+
+Volume Content Service is available to you only in Singapore, its territories and possessions (the ‘Territory’).
+
+Content Codes may only be redeemed by your Authorised End Users in the Territory. App Store Volume Content Codes may only be distributed to your Authorised End Users in the Territory, but App Store Volume Content may be assigned via Managed Distribution to your Authorised End Users in any country where such Volume Content is commercially available, subject to change at any time. Your use of the Volume Content Service for the purchase of app content is solely with the App Store in the Territory, and any subsequent downloads or assignments shall not create a separate agreement or sales transaction between you and any other Apple entity. You agree that you shall not use the Volume Content Service to circumvent the laws of any country or restrictions set forth by providers of the Volume Content.
+
+PAYMENTS, TAXES AND REFUND POLICY
+
+You agree that you or the purchasing authority associated with your MAID will pay for all Volume Content you purchase through the Volume Content Service, that if you are using a MAID, you are authorised to make such purchases on behalf of the purchasing authority associated with your MAID, and that Apple may charge your payment method for any Content purchased and for any additional amounts (including any taxes and late fees, as applicable) that may be accrued by or in connection with your Account. You are responsible for the timely payment of all fees and for providing Apple with a valid payment method for payment of all fees. All fees will be billed to the payment method you designate during the registration process.
+
+Your total price is the price of the content, plus any applicable transaction taxes, such as Value Added Tax, Goods and Services Tax, Service Tax, Consumption Tax and other similar taxes. Apple charges taxes only in jurisdictions where products and content are taxable, and Apple is designated to collect such taxes. Your total price is net of any applicable withholding taxes. You acknowledge that in the event a purchase is subject to any withholding, reverse charge or similar tax, the full amount of that tax or levy shall be solely for your account and you shall indemnify and hold Apple harmless against any and all claims by any competent tax authorities for any underpayment of any such withholding, reverse charge or similar tax, and any penalties and/or interest thereon. You understand and agree that you shall be responsible for determining and paying any taxes or levies resulting from your assignment of relevant products and content to Authorised End Users in territories other than the territory in which your Volume Content Apple ID or MAID is registered.
+
+If your order is placed on behalf of a tax-exempt organisation or individual, please contact Support at https://support.apple.com/business-education-programs. Please be prepared to provide proof of tax exemption status.
+
+All sales are final.
+
+Prices for Volume Content offered via the Volume Content Service may change at any time, and the Volume Content Service does not provide price protection or refunds in the event of a price reduction or promotional offering.
+
+If App Store Content or Apple Books Content becomes unavailable following a transaction but prior to initial download, your sole remedy is a refund. Should such refund be granted, Apple reserves the right to disable unused Content Codes (as defined below) and also the ability to assign Volume Content via Managed Distribution. If technical problems prevent or unreasonably delay delivery of your Volume Content, your exclusive and sole remedy is either replacement or refund of the price paid, as determined by Apple.
+
+CREDIT FOR VOLUME CONTENT
+
+Terms related to store credit and gift cards/codes are available here: https://www.apple.com/legal/internet-services/itunes/giftcards/.
+
+AUDIT RIGHTS
+
+As Apple may audit the purchases of customers through the Volume Content Service to ensure that only eligible purchases have been ordered and that all purchase conditions and usage rules have been observed, you agree to keep complete and accurate records of all uses of the Volume Content you purchased. Should an audit disclose after delivery, or should Apple otherwise discover that you were not an eligible purchaser at the time you placed your order or that you have not observed all of the conditions applicable to your purchase, Apple may:
+
+• Disable your Volume Content Apple ID or MAID;
+
+• If you placed your order by credit card, charge to your credit card the difference between the amount you paid for the delivered goods and the price that Apple charged the general public for the same goods via the Volume Content Service, in effect on the date that you placed your order; and
+
+• If you paid by a means other than credit card, (a) invoice you for the difference between the amount that you paid for the delivered goods and the price that Apple charged the general public for the same goods via the Volume Content Service, payable in fifteen days from the date of the invoice, and (b), should you fail to pay the invoice when due, institute legal action against you in a circuit court, with the prevailing party entitled to legal costs.
+
+Should Apple not offer the specific products that you purchased through the Volume Content Service, your payment method will be charged or you will be invoiced the difference between the amount you paid for the delivered goods and the price that Apple charged the general public for the closest equivalent goods via the Volume Content Service, in effect on the date that you placed your order.
+
+Apple shall have the right to request supplementary information and audit relevant records to confirm your compliance with the Terms.
+
+CONTENT AVAILABILITY
+
+Apple reserves the right to change content options (including eligibility for particular features) without notice.
+
+CONTENT DISTRIBUTION
+
+App Store Content or Apple Books Content purchased as Volume Content via the Volume Content Service may be provided to your Authorised End Users either (i) via direct transmission to the Apple account or MAID of each Authorised End User (‘Managed Distribution’), (ii) via distribution of alphanumeric codes generated by Apple (‘Content Codes’), which are redeemable in the App Store for specific application content, or in Apple Books for specific book content; or (iii) for apps only, by assignment directly to an iOS device, in which case (a) separate purchases must be made for each unique device (i.e. a single licence may not be simultaneously shared by multiple devices); and (b) you shall be deemed the ‘end user’ for purposes of any End User Licence Agreements, Terms of Use or other agreements engaged by your Authorised End Users relating to any App Store Volume Content.
+
+Solely as an accommodation to you, Apple agrees to permit you to (1) use a single Content Code to sync App Store Content to multiple devices, up to the number of codes you have purchased (instead of having to redeem a separate code), provided you agree to sync no more copies than the number of codes you purchased; and (2) purchase multiple copies of the same Apple Books Content and distribute them for redemption by persons who are either employees, faculty or teaching assistants (regardless of whether they are directly employed by the institution) at the institution or registered as students at your school or school district. These accommodations may only be available for a limited period of time, and Apple makes no guarantee regarding the availability of these accommodations in the future.
+
+MANAGED DISTRIBUTION
+
+Upon completion of your purchase of Volume Content, you will be entitled to assign the specific Apple Books Content or App Store Content that you have purchased in the quantity selected, each of which may be assigned to an Apple or MAID account owned or controlled by you or one of your Authorised End Users or, in the case of App Store Volume Content, to a unique device owned or controlled by you or one of your Authorised End Users. This entitlement will not expire, subject to availability of the specific products. Using a Volume Content Apple ID with a mobile device management system (‘MDM’), you will be able to invite your Authorised End Users to associate their Apple account or device with your Volume Content Apple ID and, upon the Authorised End User’s acceptance, you may assign Apple Books Content and App Store Content to them or, in the case of App Store Content, to their devices. In order to receive a product, your Authorised End Users must have a valid Apple or MAID account (subject to acceptance of the Terms), and compatible hardware and software and internet access.
+
+For Apple Books Content: You may not use the Apple Books Content in a library-type lending scenario. YOU UNDERSTAND AND AGREE THAT THE OWNER OF THE APPLE ACCOUNT TO WHICH AN APPLE BOOKS PRODUCT IS ASSIGNED WILL BECOME THE OWNER OF THAT PRODUCT AND SHALL BE ENTITLED TO ALL ASSOCIATED RIGHTS, SUBJECT TO THE TERMS. SUCH PRODUCTS ARE NON-TRANSFERABLE.
+
+For App Store Content: You will retain ownership of App Store Content regardless of whether it has been assigned to an Authorised End User’s Apple Account, MAID or a specific device ID. You may revoke the assignment and re-assign the App Store Content to another Authorised End User or device ID subject to certain service limitations. Once you have revoked an assignment from a particular user or device, that user or device will no longer be authorised to use the App Store Content.
+
+CONTENT CODES
+
+For Volume Content Apple ID purchases, Apple may provide you with Content Codes in the quantity you specify when making your purchase, each of which may be redeemed (i) in the App Store for specific App Store Content purchased; or (ii) in Apple Books for specific Apple Books Content purchased. The Content Codes shall be provided to you electronically via email upon execution of your purchase, and such Content Codes shall immediately become active for redemption by your Authorised End Users and shall not expire, subject to availability. You and/or your Authorised End Users may redeem the Content Code only in accordance with the Terms. Each Content Code for App Store Content must be redeemed to an Apple account owned and controlled by your organisation or by one of your Authorised End Users. Each Content Code for Apple Books Content must be redeemed to an account owned or controlled by the Authorised End User. YOU UNDERSTAND AND AGREE THAT THE OWNER OF THE REDEEMING APPLE ACCOUNT WILL BECOME (i) FOR APP STORE CONTENT, THE LICENSEE OF THAT COPY OF THE CONTENT; AND (ii) FOR APPLE BOOKS CONTENT, THE OWNER OF THAT COPY OF THE CONTENT, AND SHALL BE ENTITLED TO ALL ASSOCIATED RIGHTS. SUCH LICENCES OR CONTENT ARE NON-TRANSFERABLE.
+
+You may distribute the Content Codes only to your Authorised End Users and you agree to make the following Authorised End User Terms and Conditions, as applicable for the purchased content type, readily available on the instrument used to distribute the Content Codes (e.g. certificate, card, email):
+
+For apps and/or books:
+
+‘Code is redeemable only in the App Store and/or Apple Books, as applicable, for [the Territory]. Requires an Apple account, subject to prior acceptance of licence and usage terms. Compatible software and hardware and internet access (fees may apply) required. Not for resale. Full terms apply: https://www.apple.com/legal/internet-services/itunes.’
+
+VOLUME CONTENT RESTRICTIONS
+
+You may not resell or accept any form of compensation in exchange for distribution of Volume Content, nor may you distribute or authorise distribution of the Volume Content to anyone other than your Authorised End Users. You shall be solely responsible for your use of the Volume Content, and for any loss or liability to the content provider or Apple therefrom. You may not export Apple Books or App Store Volume Content for use outside of the Territory, nor represent that you have the right or ability to do so; you may, however, assign App Store Volume Content to end users outside of the Territory solely to the extent permitted by these Volume Content Terms. Risk of loss and transfer of title for the Volume Content pass to you upon electronic transmission to you. Apple reserves the right to close any and all applicable Apple accounts and request alternative forms of payment if Apple determines the Volume Content is fraudulently obtained or used. By using the Volume Content Service, you agree that you are acquiring Volume Content for use by you and your Authorised End Users on your behalf.
+
+ELECTRONIC CONTRACTING
+
+Your use of the Volume Content Service includes the ability to enter into agreements and/or to make transactions electronically. YOU REPRESENT AND WARRANT THAT YOU HAVE THE RIGHT AND AUTHORITY TO ENTER INTO THIS AGREEMENT ON BEHALF OF ANY ENTITY YOU REPRESENT, AND TO LEGALLY BIND SUCH ENTITY TO THE TERMS AND OBLIGATIONS OF THIS AGREEMENT. YOU ACKNOWLEDGE THAT YOUR ELECTRONIC SUBMISSIONS CONSTITUTE YOUR AGREEMENT AND INTENT TO BE BOUND BY AND TO PAY FOR SUCH AGREEMENTS AND TRANSACTIONS. YOUR AGREEMENT AND INTENT TO BE BOUND BY ELECTRONIC SUBMISSIONS APPLY TO ALL RECORDS RELATING TO ALL TRANSACTIONS YOU ENTER INTO ON THIS SITE, INCLUDING NOTICES OF CANCELLATION, POLICIES, CONTRACTS AND APPLICATIONS. In order to access and retain your electronic records, you may be required to have certain hardware and software, which are your sole responsibility.
+
+To the extent permitted by applicable law, you agree to indemnify and hold harmless Apple, and upon Apple’s request, defend Apple, its directors, officers, employees, independent contractors and agents (each an ‘Apple Indemnified Party’) from any and all claims, losses, liabilities, damages, expenses and costs, including without limitation lawyers’ fees and court costs, (collectively, ‘Losses’) incurred by an Apple Indemnified Party and arising from or related to any of the following: (i) Your breach of any certification, covenant, obligation, representation or warranty made in this Agreement; (ii) Your use of the Volume Content Service. In no event may you enter into any settlement or like agreement with a third party that affects Apple’s rights or binds Apple in any way, without the prior written consent of Apple.
+
+Last updated: 31 March 2022

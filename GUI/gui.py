@@ -25,6 +25,8 @@ from tkVideoPlayer import TkinterVideo # pip install tkvideoplayer
 #from TkinterDnD2 import DND_FILES, TkinterDnD
 import pygame   #pip install pygame
 
+from text2textSteg import *
+
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path("./assets") 
 
@@ -57,9 +59,27 @@ def vp_start_gui():
     def relative_to_assets(path: str) -> Path:
         return ASSETS_PATH / Path(path)
 
-    def encoder_check_for_error():
+    # encode process
+    def encode_process():
+        global cover_path
+        global payload_path
         if(payload_flag == 1 and cover_object_flag == 1):
-            tk.messagebox.showinfo(title="Success!", message="Encoding successful!") # Success message pop up
+            # text as cover & payload
+            if(cover_path.endswith(".txt") and payload_path.endswith(".txt")):
+                with open(cover_path, encoding="utf8", errors='ignore') as file:
+                    for line in file:
+                            cover = line.strip()
+                with open(payload_path, encoding="utf8", errors='ignore') as file:
+                    for line in file:
+                            payload = line.strip()
+                # show encoded text in output box
+                encodedText = encode(cover,payload,1)
+                tbox_output = tk.Text(window, background="#ffffff")
+                tbox_output.place(x=70,y=359,width=(471-70),height=(712-359))
+                tbox_output.insert("end", encodedText)
+                # save output into textfile
+                saveTxtToFile(encodedText,"encodedText")
+                tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encodedText.txt") # Success message pop up
         elif(payload_flag == 1 and cover_object_flag == 0):
             tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Cover object missing.") # Error message pop up
         elif(payload_flag == 0 and cover_object_flag == 1):
@@ -69,11 +89,19 @@ def vp_start_gui():
         
 
     def decoder_check_for_error():
+        global stego_path
         if(stego_flag == 1):
+            if(stego_path.endswith(".txt")):
+                with open(stego_path, encoding="utf8", errors='ignore') as file:
+                    for line in file:
+                            stego = line.strip()
+                tbox_output = tk.Text(window, background="#ffffff")
+                tbox_output.place(x=70,y=359,width=(471-70),height=(712-359))
+                secret_text = decode(stego,1)
+                tbox_output.insert("end", secret_text)
             tk.messagebox.showinfo(title="Success!", message="Decoding successful!") # Success message pop up
         else:
             tk.messagebox.showerror(title="Failed to decode", message="Decoding unsuccessful. Stego object missing.") # Error message pop up
-
         #This function is use to preview images:
         ##params {path - the file path to obtain image}
         ##params {objectFlag - 0 for cover Object, 1 for payload, 2 for stego, 3 for output}   
@@ -554,7 +582,7 @@ def vp_start_gui():
         image=button_image_1,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: encoder_check_for_error(),
+        command=lambda: encode_process(),
         relief="flat"
     )
     encode_button.place(
@@ -782,6 +810,7 @@ def vp_start_gui():
             payload_flag = 1
         elif(payload_path.endswith(".txt") or payload_path.endswith(".docx") or payload_path.endswith(".xls")):
             previewText(payload_path, 1)
+            payload_flag = 1
         elif(payload_path.endswith(".mp4")):
             previewVideo(payload_path, 1)
             payload_flag = 1

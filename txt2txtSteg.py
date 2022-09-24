@@ -1,9 +1,7 @@
 # text (cover file) to text (payload) Steganography
+# currently can only do 1 lsb
 
-import cv2
 import numpy as np
-import types
-import PyPDF2
 
 # convert data to binary
 def dataToBin(data):
@@ -17,24 +15,8 @@ def dataToBin(data):
         # Input type not able to be changed to binary
         raise TypeError("Input type not supported")
 
-# convert binary to ASCII
-def binToStr(bin):
-    # Initializing a binary string in the form of
-    # 0 and 1, with base of 2
-    binInt = int(bin, 2)
-    
-    # Getting the byte number
-    byteNum = binInt.bit_length() + 7 // 8
-    
-    # Getting an array of bytes
-    binArray = binInt.to_bytes(byteNum, "big")
-    
-    # Converting the array into ASCII text
-    ascii_text = binArray.decode()
-    
-    # Getting the ASCII value
-    return ascii_text
 
+# Function to hide payload inside cover
 def encode(cover, payload, lsb):
     # Add delimeter to secret data
     payload += "%$&@"
@@ -49,11 +31,12 @@ def encode(cover, payload, lsb):
     # check if coverData is big enough for payloadData
     if len(payloadBin) / lsb > len(coverBin) / 8:
         raise ValueError("[!] Insufficient bytes, need bigger cover document")
-    #print(len(payloadBin)/ lsb)
-    #print(len(coverBin) / 8)
+    
+    print("Length of cover (by Bytes) in Binary:", len(coverBin) / 8)
+    print("Length of payload (with delimeter) in Binary:", len(payloadBin)/ lsb)
     print ("[*] Encoding data... \n")
     
-    '''--Checkpoint--'''
+    '''--Checkpoint--''' # Can put to comment 
     print("\ncover Binary:" , "(len:", len(coverBin),")" , coverBin, "\n")
     print("payload Binary:","(len:", len(payloadBin), ")", payloadBin , "\n")
 
@@ -66,7 +49,7 @@ def encode(cover, payload, lsb):
     # splitting each bit by lsb in payload if lsb = 1 > [x,x,x,x,x,x,x,x] | if lsb = 2 > [xx,xx,xx,xx]
     payloadByLSB = [payloadBin[i:i+lsb] for i in range(0, len(payloadBin), lsb)]
     
-    '''--Checkpoint--'''
+    '''--Checkpoint--''' # Can put to comment
     #print("Cover by Byte", coverBinByte)
     #print("payload / lsb: ", payloadByLSB)
 
@@ -75,7 +58,7 @@ def encode(cover, payload, lsb):
     # the counter to check where we at when we are replacing the payload bit inside cover
     bitPL = 0
    
-    #print(type(payloadByLSB))
+    #print("payloadByLSB type: ", type(payloadByLSB))
 
     coverBinBit = list(coverBin)
     #print(coverBinBit)
@@ -91,29 +74,39 @@ def encode(cover, payload, lsb):
 
     # join all the bit together
     newEncodedBin = "".join(coverBinBit)
-    #print("newEncodedBin: ", newEncodedBin)
+    print("newEncodedBin: ", newEncodedBin)
 
-    # change binary back to ASCII text
-    encodedText = binToStr(newEncodedBin)
-    print(encodedText)
+    # splitting by 8-bits  
+    allBytes = [newEncodedBin[i: i + 8] for i in range(0, len(newEncodedBin), 8)]  
+    # converting from bits to characters  
+    encodedText = ""  
+    for bytes in allBytes:  
+        encodedText += chr(int(bytes, 2))  
+    
+    print("\nEncoded Text(Stego):", encodedText, "\n")
+    print("########### Encoding Successful ###########\n")
     return encodedText
 
-def decode (encodedText, lsb):
-    print("[*] Decoding data... \n")
-    encodedBin = dataToBin(encodedText)
-    #print(encodedBin)
 
+# Function to decode the stego and find the payload
+def decode (encodedText, lsb):
+    print("encoded text: (len:", len(encodedText), ")" ,encodedText, "\n")
+    print("[*] Decoding data... \n")
+    
+    encodedBin = dataToBin(encodedText)
+    print("Stego data in binary: ", encodedBin, "\n")
+
+    
     # splitting encodedBin to bytes (8 bits per 1 byte) > xxxxxxxx xxxxxxxx xxxxxxxx
     encodedByte = []
     n = 8
     for index in range(0, len(encodedBin), n):
         encodedByte.append(encodedBin[index : index + n])
-
-    #print(encodedByte)
+    #print("Binary stego in bytes: ", encodedByte, "\n")
 
     # to add the extracted bit out and into here
     payloadBin = ""
-
+    
     # from each byte take out the last "lsb" (based on whatever the value lsb is)
     for byte in encodedByte:
         #print(byte[-lsb:])
@@ -121,15 +114,16 @@ def decode (encodedText, lsb):
         payloadBin += byte[-lsb:]
     
     '''--Checkpoint--'''
-    #print(payloadBin)
-    #print(len(payloadBin))
-    print("payloadBin: (len:", len(payloadBin), ")", payloadBin)
+    print("payloadBin: (len:", len(payloadBin), ")", payloadBin, "\n")
 
     # delimeter
     delimeter = "%$&@"
 
-    # splitting by 8-bits  
-    allBytes = [payloadBin[i: i + 8] for i in range(0, len(payloadBin), 8)]  
+    # splitting by 8-bits  (1 byte) [xxxxxxxx,xxxxxxxx, xxxxxxxx]
+    allBytes = [payloadBin[i: i + 8] for i in range(0, len(payloadBin), 8)]
+    
+    #print(allBytes, "\n")
+    
     # converting from bits to characters  
     decodedData = ""  
     for bytes in allBytes:  
@@ -141,56 +135,35 @@ def decode (encodedText, lsb):
     print("Secret data with delimeter:", decodedData)
     
     payloadTxt = decodedData.rsplit(delimeter, 1)[0]
-    print("payload (secret text):",payloadTxt)
+    print("Payload (secret text):",payloadTxt, "\n")
     return payloadTxt
-    '''
-    while len(payloadBin) % 8 != 0:
-        payloadBin -= "0"
-    
-    #print(payloadBin)
-    #print(len(payloadBin))
-    print("(divisible by 8) payloadBin: (len:", len(payloadBin), ")", payloadBin)
 
-    # change payloadBin to ASCII - this will be together with the delimeter
-    payloadStr = binToStr(payloadBin)
-    print("payload + delimeter + random string", payloadStr)
-    
-    # taking delimeter out of the string
-    delimeter = "%$&@"
-    payloadTxt = payloadStr.rsplit(delimeter, 1)[0]
-    print("payload (secret text): ",payloadTxt)
-    return payloadTxt
-    '''
 
+# Function to open .txt file
 def openTxtFile(fileName):
     f = open(fileName, "r")
     fileStr = f.read()
     return fileStr
 
+# Function to save string to .txt file !!FILENAME NEED TO HAVE .TXT!!
+def saveTxtToFile (string, fileName):
+    text_file = open(fileName, "w")
+    #write string to file
+    text_file.write(string)
+    #close file
+    text_file.close()
+
 
 '''--------------------------------------------------------------------------------------------'''
 
-docAsCover = "Hello. My name is Nur Farah Nadiah! I love burger! :)"
-secretData = "password is 4321ABC"
-
-cover = "cheeseBurgerme"
-#payload = "secret"
-
-mate = "cheeseburger"
-hide = "hello"
-
-
-#encode(docAsCover, "h", 1)
-
-#encodedText = "Hemlo. Lx o`le ir Otr!F`r`i Naeh`i  H lnve burger! :)"
-#decode(encodedText, 1)
-
-encodedText = "HELLO THERE THIS IS A TEST TEXT FILE I dont know what else to type in here to make this file bigger so here i am rambling and typing nonsense"
-
+cover = "HELLO THERE THIS IS A TEST TEXT FILE I dont know what else to type in here to make this file bigger so here i am rambling and typing nonsense"
 payload = "No"
 
-encode(encodedText, payload, 1)
+stego = encode(cover, payload, 1)
+secretData = decode(stego,1)
 
-decodeThis= "HELLO!UHDSE UIIS HS @!TERT!TDYT FHMD I!dnot jnnv what else to type in here to make this file bigger so here i am rambling and typing nonsense"
 
-decode(decodeThis,1)
+#decode(encode(cover, payload, 1), 1)
+
+# Save to txt file
+#saveTxtToFile(secretData, "secretData.txt")

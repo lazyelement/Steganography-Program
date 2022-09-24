@@ -42,6 +42,9 @@ audio_paused_payload = False
 audio_paused_stego = False
 audio_paused_output = False
 textbox_choice = "Cover Object"
+inputValue_payload = ""
+inputValue_cover = ""
+selsectedLSB = 0
 
 
 #init audio player
@@ -63,7 +66,13 @@ def vp_start_gui():
     def encode_process():
         global cover_path
         global payload_path
+        global inputValue_cover
+        global inputValue_payload
+        global selsectedLSB
         if(payload_flag == 1 and cover_object_flag == 1):
+            #create output box
+            tbox_output = tk.Text(window, background="#ffffff")
+            tbox_output.place(x=70,y=359,width=(471-70),height=(712-359))
             # text as cover & payload
             if(cover_path.endswith(".txt") and payload_path.endswith(".txt")):
                 with open(cover_path, encoding="utf8", errors='ignore') as file:
@@ -72,12 +81,17 @@ def vp_start_gui():
                 with open(payload_path, encoding="utf8", errors='ignore') as file:
                     for line in file:
                             payload = line.strip()
-                # show encoded text in output box
-                encodedText = encode(cover,payload,1)
-                tbox_output = tk.Text(window, background="#ffffff")
-                tbox_output.place(x=70,y=359,width=(471-70),height=(712-359))
+                # do encoding show encoded text in output box
+                encodedText = encode(cover,payload,selsectedLSB)
                 tbox_output.insert("end", encodedText)
                 # save output into textfile
+                saveTxtToFile(encodedText,"encodedText")
+                tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encodedText.txt") # Success message pop up
+            if(cover_path == "" and payload_path == ""):
+                # do encoding show encoded text in output box
+                encodedText = encode(inputValue_cover,inputValue_payload,selsectedLSB)
+                tbox_output.insert("end", encodedText)
+                 # save output into textfile
                 saveTxtToFile(encodedText,"encodedText")
                 tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encodedText.txt") # Success message pop up
         elif(payload_flag == 1 and cover_object_flag == 0):
@@ -90,6 +104,7 @@ def vp_start_gui():
 
     def decoder_check_for_error():
         global stego_path
+        global selsectedLSB
         if(stego_flag == 1):
             if(stego_path.endswith(".txt")):
                 with open(stego_path, encoding="utf8", errors='ignore') as file:
@@ -97,7 +112,7 @@ def vp_start_gui():
                             stego = line.strip()
                 tbox_output = tk.Text(window, background="#ffffff")
                 tbox_output.place(x=70,y=359,width=(471-70),height=(712-359))
-                secret_text = decode(stego,1)
+                secret_text = decode(stego,selsectedLSB)
                 tbox_output.insert("end", secret_text)
             tk.messagebox.showinfo(title="Success!", message="Decoding successful!") # Success message pop up
         else:
@@ -450,8 +465,9 @@ def vp_start_gui():
         #to-do: except top show error if file type selected not supported
 
     def show_selected_lsb(choice):
-        choice = var.get()
-        print("Option selected: "+choice)
+        global selsectedLSB
+        selsectedLSB = int(var.get())
+        print("Option selected: "+selsectedLSB)
 
     def show_selected_option_textbox(choice):
         global textbox_choice
@@ -462,17 +478,27 @@ def vp_start_gui():
         global textbox_choice
         global cover_object_flag
         global payload_flag
+        global payload_path
+        global cover_path
+        global inputValue_payload
+        global inputValue_cover
         inputValue=entry_2.get()
         if(textbox_choice == "Cover Object"):
             tbox_coverobj = tk.Text(window, background="#ffffff")
             tbox_coverobj.place(x=379,y=56,width=(279-30),height=(624-400))
             tbox_coverobj.insert("end", inputValue)
             cover_object_flag = 1
+            # path set to none incase user added something and changed to adding own input isntead
+            cover_path = ""
+            inputValue_cover = inputValue
         else:
             tbox_payload = tk.Text(window, background="#ffffff")
             tbox_payload.place(x=70,y=56,width=(279-30),height=(624-400))
             tbox_payload.insert("end", inputValue)
             payload_flag = 1
+            # path set to none incase user added something and changed to adding own input isntead
+            payload_path = ""
+            inputValue_payload = inputValue
 
     # window = Tk()
     window = tkinterdnd2.Tk()
@@ -1022,6 +1048,11 @@ if __name__ == '__main__':
         global audio_paused_stego
         global audio_paused_output
         global textbox_choice
+        global inputValue_cover
+        global inputValue_payload
+        global selsectedLSB
+        inputValue_payload = ""
+        inputValue_cover = ""
         payload_flag = 0
         cover_object_flag = 0
         stego_flag = 0
@@ -1033,6 +1064,7 @@ if __name__ == '__main__':
         audio_paused_stego = False
         audio_paused_output = False
         textbox_choice = "Cover Object"
+        selsectedLSB = 0
 
         # destroy window
         window.destroy()

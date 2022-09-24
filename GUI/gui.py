@@ -26,6 +26,7 @@ from tkVideoPlayer import TkinterVideo # pip install tkvideoplayer
 import pygame   #pip install pygame
 
 from text2textSteg import *
+from LSBaudio_modify import *
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path("./assets") 
@@ -44,7 +45,7 @@ audio_paused_output = False
 textbox_choice = "Cover Object"
 inputValue_payload = ""
 inputValue_cover = ""
-selsectedLSB = 0
+selectedLSB = 0
 
 
 #init audio player
@@ -68,7 +69,7 @@ def vp_start_gui():
         global payload_path
         global inputValue_cover
         global inputValue_payload
-        global selsectedLSB
+        global selectedLSB
         if(payload_flag == 1 and cover_object_flag == 1):
             #create output box
             tbox_output = tk.Text(window, background="#ffffff")
@@ -82,18 +83,27 @@ def vp_start_gui():
                     for line in file:
                             payload = line.strip()
                 # do encoding show encoded text in output box
-                encodedText = encode(cover,payload,selsectedLSB)
+                encodedText = encode(cover,payload,selectedLSB)
                 tbox_output.insert("end", encodedText)
                 # save output into textfile
                 saveTxtToFile(encodedText,"encodedText")
                 tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encodedText.txt") # Success message pop up
+            # text for payload and cover but both user input    
             if(cover_path == "" and payload_path == ""):
                 # do encoding show encoded text in output box
-                encodedText = encode(inputValue_cover,inputValue_payload,selsectedLSB)
+                encodedText = encode(inputValue_cover,inputValue_payload,selectedLSB)
                 tbox_output.insert("end", encodedText)
                  # save output into textfile
                 saveTxtToFile(encodedText,"encodedText")
                 tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encodedText.txt") # Success message pop up
+            if(cover_path.endswith(".wav") or cover_path.endswith(".mp3") and payload_path.endswith(".txt") or payload_path == ""):
+                if(payload_path == ""):
+                    output_path = encoding_audio(inputValue_payload,cover_path,selectedLSB)
+                    previewSound(output_path, 3)
+                else:
+                    output_path = encoding_audio(payload_path,cover_path,selectedLSB)
+                    previewSound(output_path, 3)
+                tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as audio_encoded.wav") # Success message pop up
         elif(payload_flag == 1 and cover_object_flag == 0):
             tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Cover object missing.") # Error message pop up
         elif(payload_flag == 0 and cover_object_flag == 1):
@@ -104,17 +114,20 @@ def vp_start_gui():
 
     def decoder_check_for_error():
         global stego_path
-        global selsectedLSB
+        global selectedLSB
         if(stego_flag == 1):
             if(stego_path.endswith(".txt")):
                 with open(stego_path, encoding="utf8", errors='ignore') as file:
                     for line in file:
                             stego = line.strip()
-                tbox_output = tk.Text(window, background="#ffffff")
-                tbox_output.place(x=70,y=359,width=(471-70),height=(712-359))
-                secret_text = decode(stego,selsectedLSB)
-                tbox_output.insert("end", secret_text)
+                secret_text = decode(stego,selectedLSB)
+            if(stego_path.endswith(".wav")):
+                secret_text = decoding_audio(stego_path,selectedLSB)
+            tbox_output = tk.Text(window, background="#ffffff")
+            tbox_output.place(x=70,y=359,width=(471-70),height=(712-359))
+            tbox_output.insert("end", secret_text)
             tk.messagebox.showinfo(title="Success!", message="Decoding successful!") # Success message pop up
+             
         else:
             tk.messagebox.showerror(title="Failed to decode", message="Decoding unsuccessful. Stego object missing.") # Error message pop up
         #This function is use to preview images:
@@ -459,15 +472,15 @@ def vp_start_gui():
                 stego_flag = 1
             elif(stego_path.endswith(".mp3") or stego_path.endswith(".wav")):
                 previewSound(stego_path,2)
+                stego_flag = 1
 
         except IndexError:
             tk.messagebox.showerror(title="No file selected", message="No file selected") # Error message pop up
         #to-do: except top show error if file type selected not supported
 
     def show_selected_lsb(choice):
-        global selsectedLSB
-        selsectedLSB = int(var.get())
-        print("Option selected: "+selsectedLSB)
+        global selectedLSB
+        selectedLSB = int(var.get())
 
     def show_selected_option_textbox(choice):
         global textbox_choice
@@ -1050,7 +1063,7 @@ if __name__ == '__main__':
         global textbox_choice
         global inputValue_cover
         global inputValue_payload
-        global selsectedLSB
+        global selectedLSB
         inputValue_payload = ""
         inputValue_cover = ""
         payload_flag = 0
@@ -1064,7 +1077,7 @@ if __name__ == '__main__':
         audio_paused_stego = False
         audio_paused_output = False
         textbox_choice = "Cover Object"
-        selsectedLSB = 0
+        selectedLSB = 0
 
         # destroy window
         window.destroy()

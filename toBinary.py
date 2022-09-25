@@ -1,8 +1,11 @@
+
 import cv2
 import numpy as np
 from PIL import Image
 import os
-import time
+import os.path
+import base64
+
 
 # converting types to binary  
 def msg_to_bin(msg):
@@ -17,43 +20,51 @@ def msg_to_bin(msg):
 
 
 # defining function to hide the secret message into the image  
-# cover file is fixed at image
-def encode(img_name, payload, choice, lsb):
+# coverFile: cover image's file name with extension can be jpeg, png, bmp
+# payloadFile: payload's file name with extension can be jpg, png, bmp
+# saveAs: file name of output encoded with extension for image can only be in png
+def encode(coverFile, payloadFile, saveAs, choice, lsb):
     #choice:
     #1: indicates that payload is a text file
     #2: indicates payload is img file
     #3: indicates payload is audio file
     #4: indiciates payload is video file
-    if img_name[-3:]=="jpg" or img_name[-4:] == "jpeg":
-        newimg = Image.open(img_name)
-        newimg.save("temp.png")
-        cover_img = cv2.imread("temp.png")
-        os.remove("temp.png")
-    
-    else:
-        cover_img = cv2.imread(img_name)
-
-    # calculating the maximum bytes for encoding
-    nBytes = cover_img.shape[0] * cover_img.shape[1] * 3 // 8
+    if lsb<1 or lsb>7:
+        return "Invalid number of LSB. Please enter a number from 1-7"
 
     if choice == 1:
-        f = open(payload,"r")
-        secret_msg = f.read()
+        if coverFile[-3:]=="jpg" or coverFile[-4:] == "jpeg":
+
+            #Convert cover image to png format
+            newimg = Image.open(coverFile)
+            newimg.save("temp.png")
+            cover_img = cv2.imread("temp.png")
+            os.remove("temp.png")
+        
+        else:
+            cover_img = cv2.imread(coverFile)
+
+        # calculating the maximum bytes for encoding
+        nBytes = cover_img.shape[0] * cover_img.shape[1] * 3 // 8
+
+        f = open(payloadFile,"r")
+        payload_msg = f.read()
 
         print("Maximum Bytes for encoding:", nBytes)
-        secret_msg += '#####'       # we can utilize any string as the delimiter
+        payload_msg += '#####'       # we can utilize any string as the delimiter
 
         # checking whether the number of bytes for encoding is less  
         # than the maximum bytes in the image  
-        if len(secret_msg) > nBytes:  
+        if len(payload_msg) > nBytes:  
             raise ValueError("Error encountered insufficient bytes, need bigger image or less data!!")  
         
         dataIndex = 0  
         # converting the input data to binary format using the msg_to_bin() function  
-        bin_secret_msg = msg_to_bin(secret_msg)
-        
+        bin_secret_msg = msg_to_bin(payload_msg)
+        print(bin_secret_msg)
         # finding the length of data that requires to be hidden  
         dataLen = len(bin_secret_msg)  
+
         for values in cover_img:  
             for pixels in values:  
                 # convert RGB values to binary format
@@ -64,34 +75,82 @@ def encode(img_name, payload, choice, lsb):
                     #r[:-1] -> gets the binary data up till, not including, the lsb, so the first 7 bits
                     #then it adds the payload's according bit to the end and wrap it up as a new decimal value
                     #int wrap converts the binary to decimal form
-                    pixels[0] = int(r[:-1] + bin_secret_msg[dataIndex], 2)  
-                    dataIndex += 1  
-                if dataIndex < dataLen:  
+                    pixels[0] = int(r[:-lsb] + bin_secret_msg[dataIndex:dataIndex+lsb], 2)  
+                    dataIndex += lsb  
+                if dataIndex< dataLen:  
                     # hiding the data into LSB of Green pixel  
-                    pixels[1] = int(g[:-1] + bin_secret_msg[dataIndex], 2)  
-                    dataIndex += 1  
-                if dataIndex < dataLen:  
+                    pixels[1] = int(g[:-lsb] + bin_secret_msg[dataIndex:dataIndex+lsb], 2)  
+                    dataIndex += lsb  
+                if dataIndex< dataLen:  
                     # hiding the data into LSB of Blue pixel  
-                    pixels[2] = int(b[:-1] + bin_secret_msg[dataIndex], 2)  
-                    dataIndex += 1  
+                    pixels[2] = int(b[:-lsb] + bin_secret_msg[dataIndex:dataIndex+lsb], 2)  
+                    dataIndex += lsb  
                 # if data is encoded, break out the loop  
-                if dataIndex >= dataLen:  
+                if dataIndex>= dataLen:  
                     break  
-        stego_file_name = "stego_"+img_name
-        if stego_file_name[-3:]=="jpg":
-            stego_file_name = stego_file_name[0:-3]+"png"
-        elif stego_file_name[-4:] == "jpeg":
-            stego_file_name = stego_file_name[0:-4]+"png"
-        cv2.imwrite(stego_file_name,cover_img)
+
+        cv2.imwrite(saveAs, cover_img)
         return 1
     
     elif choice == 2:
         # need to find a way to add delimitter to np array
-        secret_img = cv2.imread(payload)
-        sBytes = secret_img.size
-        #print(secret_img)
-        np.append(secret_img,([[1,2,3]]*secret_img.shape[0]))
-        print(secret_img)
+
+        payload_img = cv2.imread(payloadFile)
+        cover_img = cv2.imread(coverFile)
+
+        # calculating the maximum bytes for encoding
+        nBytes = cover_img.shape[0] * cover_img.shape[1] * 3 // 8
+        sBytes = payload_img.size
+
+        # Encode the payload image into a Base64 format
+        payloadExt = os.path.splitext(payloadFile)[1]
+        _, payloadArr = cv2.imencode(payloadExt,payload_img)
+        payloadB64 = base64.b64encode(payloadArr.tobytes())
+
+        if sBytes > nBytes:
+            raise ValueError("Error encountered insufficient bytes, need bigger image or less data!!")
+        
+        #check number of channels for the image (3 is RGB and 4 is RGBA)
+        channels = cover_img.shape[2]
+
+        payloadEncode = str(payloadB64)+"#####"
+        secret_msg = msg_to_bin(payloadEncode)
+
+        while len(secret_msg)%lsb!=0:
+            secret_msg += "0"
+        
+        dataLen = len(secret_msg)
+
+        dataIndex = 0
+
+        for values in cover_img:
+            for pixel in values:
+                if channels == 3:
+                    r, g, b = msg_to_bin(pixel)
+                elif channels == 4:
+                    r, g, b, a = msg_to_bin(pixel)
+                
+                if dataIndex<dataLen:
+                    pixel[0] = int(r[:-lsb] + secret_msg[dataIndex:dataIndex+lsb],2)
+                    dataIndex += lsb
+
+                if dataIndex<dataLen:
+                    pixel[1] = int(g[:-lsb] + secret_msg[dataIndex:dataIndex+lsb],2)
+                    dataIndex += lsb
+                
+                if dataIndex<dataLen:
+                    pixel[2] = int(b[:-lsb] + secret_msg[dataIndex:dataIndex+lsb],2)
+                    dataIndex += lsb
+
+                if dataIndex<dataLen and channels == 4:
+                    pixel[3] = int(a[:-lsb] + secret_msg[dataIndex:dataIndex+lsb],2)
+                    dataIndex += lsb
+                
+                if dataIndex >= dataLen:
+                    break
+        
+        cv2.imwrite(saveAs, cover_img)
+        return 1
 
     elif choice == 3:
         pass
@@ -99,45 +158,90 @@ def encode(img_name, payload, choice, lsb):
     elif choice == 4:
         pass
 
-def decode(img_name):  
+    else:
+        return "Invalid choice option. Please enter valid choice number."
+
+#img_name: file name with extension of stego file
+#saveAs: file name with extension of payload to be written into
+def decode(img_name, saveAs, choice, lsb):  
+    #choice:
+    #1: indicates that payload is a text file
+    #2: indicates payload is img file
+    #3: indicates payload is audio file
+    #4: indiciates payload is video file
 
     img = cv2.imread(img_name)
 
     
     bin_data = ""  
     
-    for values in img:  
-        for pixels in values:  
-            # converting the Red, Green, Blue values into binary format  
-            r, g, b = msg_to_bin(pixels)  
-            # data extraction from the LSB of Red pixel  
-            bin_data += r[-1]  
-            # data extraction from the LSB of Green pixel  
-            bin_data += g[-1]  
-            # data extraction from the LSB of Blue pixel  
-            bin_data += b[-1]  
+    if choice == 1:
+        for values in img:  
+            for pixels in values:  
+                # converting the Red, Green, Blue values into binary format  
+                r, g, b = msg_to_bin(pixels)  
+                # data extraction from the LSB of Red pixel  
+                bin_data += r[-lsb:]  
+                #print(bin_data)
+                # data extraction from the LSB of Green pixel  
+                bin_data += g[-lsb:]  
+                # data extraction from the LSB of Blue pixel  
+                bin_data += b[-lsb:]  
 
-    # splitting by 8-bits  
-    allBytes = [bin_data[i: i + 8] for i in range(0, len(bin_data), 8)]  
-    # converting from bits to characters  
-    decodedData = ""  
-    for bytes in allBytes:  
-        decodedData += chr(int(bytes, 2))  
-        # checking if we have reached the delimiter which is "#####"  
-        if decodedData[-5:] == "#####":  
-            break   
-    # removing the delimiter to display the actual hidden message  
-    return decodedData[:-5]  
+        # splitting by 8-bits  
+        allBytes = [bin_data[i: i + 8] for i in range(0, len(bin_data), 8)]  
+        # converting from bits to characters  
+        decodedData = ""  
+        for bytes in allBytes:  
+            decodedData += chr(int(bytes, 2))  
+            # checking if we have reached the delimiter which is "#####"  
+            if decodedData[-5:] == "#####":  
+                break
+        
 
+        #print(decodedData)
+        with open(saveAs,"w") as f:
+            f.write(decodedData[:-5])
+            f.close()
+        
+    
+    if choice == 2:
+        channels = img.shape[2]
 
+        for values in img:
+            for pixel in values:
+                if channels == 3:
+                    r, g, b = msg_to_bin(pixel)
+                    bin_data += r[-lsb:]
+                    bin_data += g[-lsb:]
+                    bin_data += b[-lsb:]
+                elif channels == 4:
+                    r, g, b, a = msg_to_bin(pixel)
+                    bin_data += r[-lsb:]
+                    bin_data += g[-lsb:]
+                    bin_data += b[-lsb:]
+                    bin_data += a[-lsb:]
+        #print(bin_data)
+        allBytes = [bin_data[i:i+8] for i in range(0,len(bin_data),8)]
 
-encode("sample.png","payload.txt",1,0)
+        decodedData = ""
+        for byte in allBytes:
+            decodedData += chr(int(byte,2))
+            if decodedData[-5:] == "#####":
+                break
+        
+        #print(decodedData)
+        decodedData = eval(decodedData[:-5])
+        decodedArr = np.frombuffer(base64.b64decode(decodedData),dtype=np.uint8)
+        decodedImg = cv2.imdecode(decodedArr,flags=cv2.IMREAD_COLOR)
 
-time.sleep(3)
+        cv2.imwrite(saveAs,decodedImg)
+        
+    
 
-print(decode("stego_sample.png"))
+encode("catTest.bmp","payload.jpg","stego_output.png",2,5)
 
-
+# decode("stego_output.png","output_payload.png",2,5)
 
 
 # defining function to encode data into Image  

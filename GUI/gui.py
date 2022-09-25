@@ -360,10 +360,10 @@ def vp_start_gui():
         global path_output
         global audio_paused_output
         global output_audio
-        if(path_output.endswith(".mp3") and audio_paused_output == False):
+        if(path_output.endswith(".mp3") or path_output.endswith(".wav") and audio_paused_output == False):
             audio = pygame.mixer.Sound(path_output)
             output_audio.play(audio, loops=0)
-        elif(path_output.endswith(".mp3") and audio_paused_output == True):
+        elif(path_output.endswith(".mp3") or path_output.endswith(".wav") and audio_paused_output == True):
             output_audio.unpause()
             audio_paused_output = False
         else:
@@ -375,7 +375,7 @@ def vp_start_gui():
         global videoplayer_output
         global path_output
         global audio_paused_output
-        if(path_output.endswith(".mp3")):
+        if(path_output.endswith(".mp3") or path_output.endswith(".wav")):
             audio_paused_output = True
             output_audio.pause()
         else:

@@ -114,7 +114,7 @@ def vp_start_gui():
             tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Payload and cover object missing.") # Error message pop up
         changeStateButton()
 
-    def decoder_check_for_error():
+    def decode_process():
         global stego_path
         global selectedLSB
         changeStateButton()
@@ -124,14 +124,18 @@ def vp_start_gui():
                     for line in file:
                             stego = line.strip()
                 secret_text = decode(stego,selectedLSB)
+                #output is in text form but not in a txt file
+                tbox_output = tk.Text(window, background="#ffffff")
+                tbox_output.place(x=70,y=359,width=(471-70),height=(712-359))
+                tbox_output.insert("end", secret_text)
             if(stego_path.endswith(".wav")):
                 secret_text = decoding_audio(stego_path,selectedLSB)
-                if(secret_text.endswith(".png")):
+                #output is in text form but not in a txt file
+                tbox_output = tk.Text(window, background="#ffffff")
+                tbox_output.place(x=70,y=359,width=(471-70),height=(712-359))
+                tbox_output.insert("end", secret_text)
+                if(secret_text.endswith(".png")): #if secret is an image
                     previewImage(secret_text,3)
-                else: #output is in text form but not in a txt file
-                    tbox_output = tk.Text(window, background="#ffffff")
-                    tbox_output.place(x=70,y=359,width=(471-70),height=(712-359))
-                    tbox_output.insert("end", secret_text)
             tk.messagebox.showinfo(title="Success!", message="Decoding successful!") # Success message pop up
              
         else:
@@ -677,7 +681,7 @@ def vp_start_gui():
         image=button_image_2,
         borderwidth=0,
         highlightthickness=0,
-        command=lambda: decoder_check_for_error(),
+        command=lambda: decode_process(),
         relief="flat"
     )
     decode_button.place(

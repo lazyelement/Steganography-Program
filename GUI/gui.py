@@ -28,6 +28,7 @@ import pygame   #pip install pygame
 
 from text2textSteg import *
 from LSBaudio_modify import *
+from toBinary import *
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path("./assets") 
@@ -38,7 +39,7 @@ stego_flag = 0
 payload_path = ""
 cover_path = ""
 stego_path = ""
-path_output = ""
+path_output = str(ASSETS_PATH)+("\encoded_decoded")    #put encode/decoded stuff here (eg.saveto = path_output+ "\filename.extension"))
 audio_paused_cover = False
 audio_paused_payload = False
 audio_paused_stego = False
@@ -71,6 +72,7 @@ def vp_start_gui():
         global inputValue_cover
         global inputValue_payload
         global selectedLSB
+        global path_output
         changeStateButton()
         if(payload_flag == 1 and cover_object_flag == 1):
             #create output box
@@ -106,6 +108,22 @@ def vp_start_gui():
                     output_path = encoding_audio(payload_path,cover_path,selectedLSB)
                     previewSound(output_path, 3)
                 tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as audio_encoded.wav") # Success message pop up
+            if(cover_path.endswith(".jpg") or cover_path.endswith(".png") or cover_path.endswith(".bmp")):#if cover is image
+                os.chmod(path_output, 777)
+                if(payload_path.endswith(".txt")):#and if payload is text
+                    #remove hard-coded path
+                    # path_output = path_output+(r"\image_encoded.png")
+                    path_output = encode(cover_path, payload_path, 1, selectedLSB)
+                    print(path_output)
+                    previewImage(path_output, 3)
+                    tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as image_encoded.png") # Success message pop up
+                if(payload_path.endswith(".jpg") or payload_path.endswith(".png") or payload_path.endswith(".bmp")):
+                    #remove hard-coded path
+                    path_output = encode(cover_path, payload_path, 2, selectedLSB)
+                    previewImage(path_output, 3)
+                    tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as image_encoded.png") # Success message pop up
+
+
         elif(payload_flag == 1 and cover_object_flag == 0):
             tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Cover object missing.") # Error message pop up
         elif(payload_flag == 0 and cover_object_flag == 1):
@@ -136,6 +154,14 @@ def vp_start_gui():
                 tbox_output.insert("end", secret_text)
                 if(secret_text.endswith(".png")): #if secret is an image
                     previewImage(secret_text,3)
+            if(stego_path.endswith(".png")):
+                pass
+                # #This part is for testing and will be removed, we wont know if payload is what file type
+                # decode(stego_path, r"C:\Users\chewc\OneDrive\Desktop\ACW1.0_Steganography\GUI\assets\encoded_decoded\image_decoded.txt", 1, selectedLSB)
+                # # previewImage(r"C:\Users\chewc\OneDrive\Desktop\ACW1.0_Steganography\GUI\assets\encoded_decoded\image_decoded.png", 3)
+                # previewText(r"C:\Users\chewc\OneDrive\Desktop\ACW1.0_Steganography\GUI\assets\encoded_decoded\image_decoded.txt",3)
+                # # decode(stego_path, "C:/Users/chewc/OneDrive/Desktop/HCIwk1to3/img_decoded.png", 2, selectedLSB)
+                # # previewImage("C:/Users/chewc/OneDrive/Desktop/HCIwk1to3/img_decoded.png", 3)
             tk.messagebox.showinfo(title="Success!", message="Decoding successful!") # Success message pop up
              
         else:

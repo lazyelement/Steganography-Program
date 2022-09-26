@@ -47,35 +47,33 @@ def encode(cover, payload, lsb):
     n  = 8
     for index in range(0, len(coverBin), n):
         coverBinByte.append(coverBin[index : index + n])
- 
-    # splitting each bit by lsb in payload if lsb = 1 > [x,x,x,x,x,x,x,x] | if lsb = 2 > [xx,xx,xx,xx]
-    payloadByLSB = [payloadBin[i:i+lsb] for i in range(0, len(payloadBin), lsb)]
     
-    '''--Checkpoint--''' # Can put to comment
-    #print("Cover by Byte", coverBinByte)
-    #print("payload / lsb: ", payloadByLSB)
+    # Get the length of the encoded payload binary
+    payloadLen = len(payloadBin)
+    # Setting a local variable to point to the binary value to encode in each iteration
+    dataIndex = 0
 
-    # getting the length of bits in payload 
-    lenPLBitByLSB = len(payloadByLSB)
-    # the counter to check where we at when we are replacing the payload bit inside cover
-    bitPL = 0
-   
-    #print("payloadByLSB type: ", type(payloadByLSB))
-
-    coverBinBit = list(coverBin)
-    #print(coverBinBit)
-    
-    '''--------LIMITATIONS--------'''
-    # this code works only for 1 lsb. i have not try for more than 1 lsb
-    for i in range(7, len(coverBinBit), 8):
-        if bitPL < len(payloadBin):
-            coverBinBit [i] = payloadBin[bitPL]
-            bitPL += 1
-        if bitPL >= len(payloadBin):
-            break
+    for i,byte in enumerate(coverBinByte):
+        # If there is still more data to store
+        if dataIndex < payloadLen:
+            tempBin = ''
+            # Remove the last few digits of the byte based on the number of LSB used
+            byte = byte[:-lsb]
+            # Loop and store the data to hide into a temp variable
+            for x in range(lsb):
+                tempBin += payloadBin[dataIndex]
+                dataIndex += 1
+                # Break the loop if all the data have been hidden
+                if dataIndex == payloadLen:
+                    break
+            # Pad 0 to the front of the temp binary if the length of the temp binary is less than the number of LSB used
+            if len(tempBin) < lsb:
+                tempBin = tempBin.ljust(lsb, '0')
+            # Adds the temp binary to the byte and change it into an integer and assign it to the back to the array of bytes
+            coverBinByte[i] = byte + tempBin
 
     # join all the bit together
-    newEncodedBin = "".join(coverBinBit)
+    newEncodedBin = "".join(coverBinByte)
     print("newEncodedBin: ", newEncodedBin)
 
     # splitting by 8-bits  
@@ -85,7 +83,8 @@ def encode(cover, payload, lsb):
     for bytes in allBytes:  
         encodedText += chr(int(bytes, 2))  
     
-    print("\nEncoded Text(Stego):", encodedText, "\n")
+    print("\nEncoded Text(Stego):", encodedText)
+    print("Length:", len(encodedText), "\n")
     print("########### Encoding Successful ###########\n")
     return encodedText
 
@@ -109,7 +108,7 @@ def decode (encodedText, lsb):
     # to add the extracted bit out and into here
     payloadBin = ""
     
-    # from each byte take out the last "lsb" (based on whatever the value lsb is)
+    # from each byte take out the last "lsb" bit(based on whatever the value lsb is)
     for byte in encodedByte:
         #print(byte[-lsb:])
         # add inside the payloadBin
@@ -147,6 +146,7 @@ def openTxtFile(fileName):
     fileStr = f.read()
     return fileStr
 
+
 # Function to save string to .txt file !!
 def saveTxtToFile (string, fileName):
     path=os.path.join(os.path.join(os.path.expanduser('~')), 'Desktop'), # set path to open desktop
@@ -158,15 +158,13 @@ def saveTxtToFile (string, fileName):
     #close file
     text_file.close()
 
-
-
 '''--------------------------------------------------------------------------------------------'''
 
-# cover = "HELLO THERE THIS IS A TEST TEXT FILE I dont know what else to type in here to make this file bigger so here i am rambling and typing nonsense"
-# payload = "No"
+cover = "HELLO THERE THIS IS A TEST TEXT FILE I dont know what else to type in here to make this file bigger so here i am rambling and typing nonsense"
+payload = "No"
 
-# stego = encode(cover, payload, 1)
-# secretData = decode(stego,1)
+stego = encode(cover, payload, 5)
+secretData = decode(stego,5)
 
 
 #decode(encode(cover, payload, 1), 1)

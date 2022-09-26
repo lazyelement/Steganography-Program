@@ -17,6 +17,7 @@ import tkinter as tk
 from turtle import bgcolor
 from PIL import Image, ImageTk
 # from TkinterDnD2 import DND_FILES, TkinterDnD #need pip install
+import time
 import tkinterdnd2
 import os
 import docx2txt # pip install docx2txt
@@ -70,6 +71,7 @@ def vp_start_gui():
         global inputValue_cover
         global inputValue_payload
         global selectedLSB
+        changeStateButton()
         if(payload_flag == 1 and cover_object_flag == 1):
             #create output box
             tbox_output = tk.Text(window, background="#ffffff")
@@ -110,11 +112,12 @@ def vp_start_gui():
             tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Payload missing.") # Error message pop up
         else:
             tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Payload and cover object missing.") # Error message pop up
-        
+        changeStateButton()
 
     def decoder_check_for_error():
         global stego_path
         global selectedLSB
+        changeStateButton()
         if(stego_flag == 1):
             if(stego_path.endswith(".txt")):
                 with open(stego_path, encoding="utf8", errors='ignore') as file:
@@ -123,13 +126,29 @@ def vp_start_gui():
                 secret_text = decode(stego,selectedLSB)
             if(stego_path.endswith(".wav")):
                 secret_text = decoding_audio(stego_path,selectedLSB)
-            tbox_output = tk.Text(window, background="#ffffff")
-            tbox_output.place(x=70,y=359,width=(471-70),height=(712-359))
-            tbox_output.insert("end", secret_text)
+                if(secret_text.endswith(".png")):
+                    previewImage(secret_text,3)
+                else: #output is in text form but not in a txt file
+                    tbox_output = tk.Text(window, background="#ffffff")
+                    tbox_output.place(x=70,y=359,width=(471-70),height=(712-359))
+                    tbox_output.insert("end", secret_text)
             tk.messagebox.showinfo(title="Success!", message="Decoding successful!") # Success message pop up
              
         else:
             tk.messagebox.showerror(title="Failed to decode", message="Decoding unsuccessful. Stego object missing.") # Error message pop up
+        changeStateButton()
+
+    # change button to disabled when loading
+    def changeStateButton():
+        if (decode_button['state'] == NORMAL):
+            decode_button['state'] = DISABLED
+        else:
+            decode_button['state'] = NORMAL
+        if (encode_button['state'] == NORMAL):
+            encode_button['state'] = DISABLED
+        else:
+            encode_button['state'] = NORMAL
+
         #This function is use to preview images:
         ##params {path - the file path to obtain image}
         ##params {objectFlag - 0 for cover Object, 1 for payload, 2 for stego, 3 for output}   

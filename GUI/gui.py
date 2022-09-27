@@ -28,6 +28,8 @@ import pygame   #pip install pygame
 
 from text2textSteg import *
 from LSBaudio_modify import *
+from EncodeToVideo import *
+from DecodeFromVideo import *
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path("./assets") 
@@ -106,6 +108,12 @@ def vp_start_gui():
                     output_path = encoding_audio(payload_path,cover_path,selectedLSB)
                     previewSound(output_path, 3)
                 tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as audio_encoded.wav") # Success message pop up
+            if(cover_path.endswith(".mp4") or cover_path.endswith(".mkv") or cover_path.endswith(".mov") or cover_path.endswith(".avi")):#If cover is video (MUST INSTALL ffmpeg @ https://windowsloop.com/install-ffmpeg-windows-10/)
+                en = Encode(cover_path, payload_path, selectedLSB+1)
+                en.hideData()
+                previewVideo("video_encoded.mp4", 3)
+                tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as video_encoded.mp4") # Success message pop up
+
         elif(payload_flag == 1 and cover_object_flag == 0):
             tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Cover object missing.") # Error message pop up
         elif(payload_flag == 0 and cover_object_flag == 1):
@@ -117,6 +125,7 @@ def vp_start_gui():
     def decode_process():
         global stego_path
         global selectedLSB
+        global path_output
         changeStateButton()
         if(stego_flag == 1):
             if(stego_path.endswith(".txt")):
@@ -136,6 +145,20 @@ def vp_start_gui():
                 tbox_output.insert("end", secret_text)
                 if(secret_text.endswith(".png")): #if secret is an image
                     previewImage(secret_text,3)
+            if(stego_path.endswith(".mp4") or stego_path.endswith(".mkv") or stego_path.endswith(".mov") or stego_path.endswith(".avi")):#if stego is video
+                de = Decode(stego_path, selectedLSB+1)#Create a decode object (according to JW's algo)
+                output_ext = de.showData()#Do the decode and return a file ext of the payload
+                path_output = 'video_decoded'+ output_ext#set global path_output = video_decoded.*ext*
+                if(output_ext == ".txt" or output_ext == ".docx" or output_ext == ".xlsx"):
+                    previewText(path_output, 3)
+                elif(output_ext == ".png" or output_ext == ".jpg" or output_ext == ".bmp"):
+                    previewImage(path_output, 3)
+                elif(output_ext == ".mp4" or output_ext == ".mov"):
+                    previewVideo(path_output, 3)
+                elif(output_ext == ".mp3" or output_ext == ".wav"):
+                    previewSound(path_output, 3)
+
+                
             tk.messagebox.showinfo(title="Success!", message="Decoding successful!") # Success message pop up
              
         else:

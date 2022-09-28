@@ -132,12 +132,19 @@ def vp_start_gui():
                 tbox_output.insert("end", secret_text)
             if(stego_path.endswith(".wav")):
                 secret_text = decoding_audio(stego_path,selectedLSB)
-                #output is in text form but not in a txt file
-                tbox_output = tk.Text(window, background="#ffffff")
-                tbox_output.place(x=70,y=359,width=(471-70),height=(712-359))
-                tbox_output.insert("end", secret_text)
                 if(secret_text.endswith(".png")): #if secret is an image
                     previewImage(secret_text,3)
+                elif(secret_text.endswith(".mp4")): #if secret is a video
+                    previewVideo(secret_text,3)
+                elif(secret_text.endswith(".docx")): #if secret is a docx file
+                    previewText(secret_text,3)
+                elif(secret_text.endswith(".mp3") or secret_text.endswith(".wav")): #if secret is a mp3/wav file
+                    previewSound(secret_text,3)
+                else:
+                    #output is in text form but not in a txt file
+                    tbox_output = tk.Text(window, background="#ffffff")
+                    tbox_output.place(x=70,y=359,width=(471-70),height=(712-359))
+                    tbox_output.insert("end", secret_text)
             tk.messagebox.showinfo(title="Success!", message="Decoding successful!") # Success message pop up
              
         else:

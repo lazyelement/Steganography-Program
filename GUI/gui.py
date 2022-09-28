@@ -109,10 +109,14 @@ def vp_start_gui():
                     previewSound(output_path, 3)
                 tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as audio_encoded.wav") # Success message pop up
             if(cover_path.endswith(".mp4") or cover_path.endswith(".mkv") or cover_path.endswith(".mov") or cover_path.endswith(".avi")):#If cover is video (MUST INSTALL ffmpeg @ https://windowsloop.com/install-ffmpeg-windows-10/)
-                en = Encode(cover_path, payload_path, selectedLSB+1)
-                en.hideData()
-                previewVideo("video_encoded.mp4", 3)
-                tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as video_encoded.mp4") # Success message pop up
+                try:
+                    en = Encode(cover_path, payload_path, selectedLSB+1)
+                    en.hideData()
+                    previewVideo("video_encoded.mp4", 3)
+                    tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as video_encoded.mp4") # Success message pop up
+                except ValueError:
+                    tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Payload larger than cover object.") # Error
+
 
         elif(payload_flag == 1 and cover_object_flag == 0):
             tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Cover object missing.") # Error message pop up

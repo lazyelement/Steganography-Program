@@ -94,6 +94,7 @@ def encode(coverFile, payloadFile, lsb):
     # Write out the encoded image 
     cv2.imwrite(saveAs, cover_img)
     print("Saved encoded file as ", saveAs)
+    return saveAs
 
 
 def decode(imgFile, lsb):
@@ -147,10 +148,13 @@ def decode(imgFile, lsb):
     # Decode base64 formatted decoded data back into byte data to save the file as
     decodedData = base64.b64decode(eval(decodedData))
     imgFile = imgFile.replace("encoded","decoded")
-    with open(imgFile + fileExt, "wb") as outFile:
+    saveAs = imgFile + fileExt
+    with open(saveAs, "wb") as outFile:
             outFile.write(decodedData)
 
-    print("Saved decoded file as ", imgFile+fileExt)
+    print("Saved decoded file as ", saveAs)
+
+    return saveAs
 
 
 #encode("sample.png","payload.jpg",3)

@@ -38,7 +38,7 @@ stego_flag = 0
 payload_path = ""
 cover_path = ""
 stego_path = ""
-path_output = ""
+output_path = ""
 audio_paused_cover = False
 audio_paused_payload = False
 audio_paused_stego = False
@@ -68,6 +68,7 @@ def vp_start_gui():
     def encode_process():
         global cover_path
         global payload_path
+        global output_path
         global inputValue_cover
         global inputValue_payload
         global selectedLSB
@@ -98,8 +99,9 @@ def vp_start_gui():
                  # save output into textfile
                 saveTxtToFile(encodedText,"encodedText")
                 tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encodedText.txt") # Success message pop up
-            if(cover_path.endswith(".wav") or cover_path.endswith(".mp3") and payload_path.endswith(".txt") or payload_path == ""):
-                if(payload_path == ""):
+            # Payload is anything. cover is audio
+            if(cover_path.endswith(".wav") or cover_path.endswith(".mp3")):
+                if(payload_path == ""): #using input typed in from user
                     output_path = encoding_audio(inputValue_payload,cover_path,selectedLSB)
                     previewSound(output_path, 3)
                 else:
@@ -299,10 +301,10 @@ def vp_start_gui():
         global audio_paused_cover
         global cover_audio
         print("coverpath is", cover_path)
-        if(cover_path.endswith(".mp3") and audio_paused_cover == False): #if audio is unpaused, play it from the start if play button is hit
+        if(cover_path.endswith(".mp3") or cover_path.endswith(".wav") and audio_paused_cover == False): #if audio is unpaused, play it from the start if play button is hit
             audio = pygame.mixer.Sound(cover_path)
             cover_audio.play(audio, loops=0)
-        elif(cover_path.endswith(".mp3") and audio_paused_cover == True): #if audio is paused, unpause it
+        elif(cover_path.endswith(".mp3") or cover_path.endswith(".wav") and audio_paused_cover == True): #if audio is paused, unpause it
             cover_audio.unpause()
             audio_paused_cover = False
         else:
@@ -314,7 +316,7 @@ def vp_start_gui():
         global videoplayer_coverobj
         global cover_path
         global audio_paused_cover
-        if(cover_path.endswith(".mp3")):
+        if(cover_path.endswith(".mp3") or cover_path.endswith(".wav")):
             audio_paused_cover = True
             cover_audio.pause()
         else:
@@ -327,10 +329,10 @@ def vp_start_gui():
         global payload_path
         global audio_paused_payload
         global payload_audio
-        if(payload_path.endswith(".mp3") and audio_paused_payload == False):
+        if(payload_path.endswith(".mp3") or payload_path.endswith(".wav") and audio_paused_payload == False):
             audio = pygame.mixer.Sound(payload_path)
             payload_audio.play(audio, loops=0)
-        elif(payload_path.endswith(".mp3") and audio_paused_payload == True):
+        elif(payload_path.endswith(".mp3") or payload_path.endswith(".wav") and audio_paused_payload == True):
             payload_audio.unpause()
             audio_paused_payload = False
         else:
@@ -342,7 +344,7 @@ def vp_start_gui():
         global videoplayer_payload
         global payload_path
         global audio_paused_payload
-        if(payload_path.endswith(".mp3")):
+        if(payload_path.endswith(".mp3") or payload_path.endswith(".wav")):
             audio_paused_payload = True
             payload_audio.pause()
         else:
@@ -355,10 +357,10 @@ def vp_start_gui():
         global stego_path
         global audio_paused_stego
         global stego_audio
-        if(stego_path.endswith(".mp3") and audio_paused_stego == False):
+        if(stego_path.endswith(".mp3") or stego_path.endswith(".wav") and audio_paused_stego == False):
             audio = pygame.mixer.Sound(stego_path)
             stego_audio.play(audio, loops=0)
-        elif(stego_path.endswith(".mp3") and audio_paused_stego == True):
+        elif(stego_path.endswith(".mp3") or stego_path.endswith(".wav") and audio_paused_stego == True):
             stego_audio.unpause()
             audio_paused_stego = False
         else:
@@ -370,7 +372,7 @@ def vp_start_gui():
         global videoplayer_stego
         global stego_path
         global audio_paused_stego
-        if(stego_path.endswith(".mp3")):
+        if(stego_path.endswith(".mp3") or stego_path.endswith(".wav")):
             audio_paused_stego = True
             stego_audio.pause()
         else:
@@ -380,13 +382,13 @@ def vp_start_gui():
     # Play video and audio for output
     def playAgain_output():
         global videoplayer_output
-        global path_output
+        global output_path
         global audio_paused_output
         global output_audio
-        if(path_output.endswith(".mp3") or path_output.endswith(".wav") and audio_paused_output == False):
-            audio = pygame.mixer.Sound(path_output)
+        if(output_path.endswith(".mp3") or output_path.endswith(".wav") and audio_paused_output == False):
+            audio = pygame.mixer.Sound(output_path)
             output_audio.play(audio, loops=0)
-        elif(path_output.endswith(".mp3") or path_output.endswith(".wav") and audio_paused_output == True):
+        elif(output_path.endswith(".mp3") or output_path.endswith(".wav") and audio_paused_output == True):
             output_audio.unpause()
             audio_paused_output = False
         else:
@@ -396,9 +398,9 @@ def vp_start_gui():
     # Pause video and audio for output
     def pauseVideo_output():
         global videoplayer_output
-        global path_output
+        global output_path
         global audio_paused_output
-        if(path_output.endswith(".mp3") or path_output.endswith(".wav")):
+        if(output_path.endswith(".mp3") or output_path.endswith(".wav")):
             audio_paused_output = True
             output_audio.pause()
         else:

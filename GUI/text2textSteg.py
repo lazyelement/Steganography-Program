@@ -160,11 +160,11 @@ def saveTxtToFile (string, fileName):
 
 '''--------------------------------------------------------------------------------------------'''
 
-cover = "HELLO THERE THIS IS A TEST TEXT FILE I dont know what else to type in here to make this file bigger so here i am rambling and typing nonsense"
-payload = "No"
+# cover = "HELLO THERE THIS IS A TEST TEXT FILE I dont know what else to type in here to make this file bigger so here i am rambling and typing nonsense"
+# payload = "No"
 
-stego = encode(cover, payload, 5)
-secretData = decode(stego,5)
+# stego = encode(cover, payload, 5)
+# secretData = decode(stego,5)
 
 
 #decode(encode(cover, payload, 1), 1)

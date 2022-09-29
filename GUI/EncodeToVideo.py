@@ -6,12 +6,11 @@ import numpy as np
 from subprocess import call,STDOUT
 
 class Encode:
-    def __init__(self, coverVidFile, payloadFile, numOfBits):
-        coverPath = os.path.join(os.getcwd(), coverVidFile)
-        payloadPath = os.path.join(os.getcwd(), payloadFile)
-        self.coverVidPath = coverPath
-        self.payloadPath = payloadPath
+    def __init__(self, coverVidFile, payloadItem, numOfBits, isPath):
+        self.coverVidPath = os.path.join(os.getcwd(), coverVidFile)
+        self.payloadType = payloadItem # Either path or string of text to encode
         self.numOfBits = numOfBits
+        self.isPath = isPath
 
 
     # # checking if the image exists on given path
@@ -58,18 +57,35 @@ class Encode:
 
     # Method to hide/encode the encrypted binary data into the cover object
     def hideData(self):
-        # Opens the payload object and encodes it into a Base64 format
-        payloadB64 = ''
-        with open(self.payloadPath, "rb") as payload:
-            payloadB64 = base64.b64encode(payload.read())
-
-        # Find extension of cover video and payload object
+        # Find extension of cover video
         coverExt = os.path.splitext(self.coverVidPath)[1]
-        payloadExt = os.path.splitext(self.payloadPath)[1]
 
-        # Add padding to file extention untill there is 10 characters
-        while len(payloadExt) < 10:
-            payloadExt += '@'
+        # Check if payload is a file
+        if self.isPath:
+            payloadPath = os.path.join(os.getcwd(), self.payloadType)
+
+            # Opens the payload object and encodes it into a Base64 format
+            payloadB64 = ''
+            with open(payloadPath, "rb") as payload:
+                payloadB64 = base64.b64encode(payload.read())
+
+            # Find extension of payload object
+            payloadExt = os.path.splitext(payloadPath)[1]
+
+            # Add padding to file extention untill there is 10 characters
+            while len(payloadExt) < 10:
+                payloadExt += '@'
+
+            # Converts the encoded Base64 payload into a string and adds the file extention and the delimeter to indicate the end of the file
+            payloadEncode = str(payloadB64) + payloadExt + '#####'
+        # If payload is a string
+        else:
+            payloadString = self.payloadType
+            # Encodes the payload into a Base64 format
+            payloadB64 = base64.b64encode(payloadString.encode('utf-8'))
+            # Converts the encoded Base64 payload into a string and adds the delimeter to indicate the end of the file
+            payloadEncode = str(payloadB64) + '$' + '#####'
+
 
         # Extract the frames from the cover video
         frameExtracted = Encode.frameExtraction(self.coverVidPath)
@@ -86,9 +102,6 @@ class Encode:
         # Calculate the maximum bytes that can be encoded for the cover video
         maxBytes = numOfFrames * ((imgResolution * self.numOfBits * 3) // 8)
         print("Maximum bytes to encode:", maxBytes)
-
-        # Converts the encoded Base64 payload into a string and adds the file extention and the delimeter to indicate the end of the file
-        payloadEncode = str(payloadB64) + payloadExt + '#####'
 
         # Check if the number of bytes of the payload object to encode is less than the maximum bytes in the cover video
         print('Payload size: ', len(payloadEncode))
@@ -210,17 +223,17 @@ class Encode:
         call(["ffmpeg", "-i", "tmp/temp.avi", "-i", "tmp/audio.mp3", "-codec", "copy", "tmp/outputVid.avi", "-y"],stdout=open(os.devnull, "w"), stderr=STDOUT)
 
         # Change the temp video file into a format that can be played
-        # stegoObjName = input("Filename to save as (Without file extension): ")
         stegoObjName = "video_encoded"
         call(["ffmpeg", "-i", "tmp/outputVid.avi", "-f", "avi", "-c:v", "rawvideo", "-pix_fmt", "rgb32", stegoObjName+coverExt], stdout=open(os.devnull, "w"), stderr=STDOUT)
 
         # Clears the temp folder
         if os.path.exists("./tmp"):
             shutil.rmtree("./tmp")
+        return coverExt
 
 # coverFile = input("Enter cover video file name: ")
 # payloadFile = input("Enter payload object file name: ")
 # numOfBits = int(input("Enter number of LSB to use: "))
 
-# en = Encode(coverFile, payloadFile, numOfBits)
+# en = Encode(coverFile, payloadFile, numOfBits, False)
 # en.hideData()

@@ -6,7 +6,11 @@ import os
 import docx2txt
 import pandas as pd #pip install pandas
 import wave
+from pathlib import Path
 from os.path import join
+
+OUTPUT_PATH = Path(__file__).parent
+ASSETS_PATH = OUTPUT_PATH / Path("./output") 
 
 #get file extension
 def file_type(data):

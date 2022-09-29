@@ -40,7 +40,7 @@ stego_flag = 0
 payload_path = ""
 cover_path = ""
 stego_path = ""
-path_output = ""
+output_path = ""
 audio_paused_cover = False
 audio_paused_payload = False
 audio_paused_stego = False
@@ -70,6 +70,7 @@ def vp_start_gui():
     def encode_process():
         global cover_path
         global payload_path
+        global output_path
         global inputValue_cover
         global inputValue_payload
         global selectedLSB
@@ -91,23 +92,46 @@ def vp_start_gui():
                 tbox_output.insert("end", encodedText)
                 # save output into textfile
                 saveTxtToFile(encodedText,"encodedText")
-                tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encodedText.txt") # Success message pop up
-            # text for payload and cover but both user input    
+                tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encodedText.txt in output folder") # Success message pop up
+            # payload is txt cover is input
+            if(cover_path == "" and payload_path.endswith(".txt")):
+                with open(payload_path, encoding="utf8", errors='ignore') as file:
+                    for line in file:
+                            payload = line.strip()
+                # do encoding show encoded text in output box
+                encodedText = encode(inputValue_cover,payload,selectedLSB)
+                tbox_output.insert("end", encodedText)
+                # save output into textfile
+                saveTxtToFile(encodedText,"encodedText")
+                tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encodedText.txt in output folder") # Success message pop up
+             # cover is txt payload is input
+            if(payload_path == "" and cover_path.endswith(".txt")):
+                with open(cover_path, encoding="utf8", errors='ignore') as file:
+                    for line in file:
+                            cover = line.strip()
+                # do encoding show encoded text in output box
+                encodedText = encode(cover,inputValue_payload,selectedLSB)
+                tbox_output.insert("end", encodedText)
+                # save output into textfile
+                saveTxtToFile(encodedText,"encodedText")
+                tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encodedText.txt in output folder") # Success message pop up
+            # payload and cover both user input    
             if(cover_path == "" and payload_path == ""):
                 # do encoding show encoded text in output box
                 encodedText = encode(inputValue_cover,inputValue_payload,selectedLSB)
                 tbox_output.insert("end", encodedText)
                  # save output into textfile
                 saveTxtToFile(encodedText,"encodedText")
-                tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encodedText.txt") # Success message pop up
-            if(cover_path.endswith(".wav") or cover_path.endswith(".mp3") and payload_path.endswith(".txt") or payload_path == ""):
-                if(payload_path == ""):
+                tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encodedText.txt in output folder") # Success message pop up
+            # Payload is anything. cover is audio
+            if(cover_path.endswith(".wav") or cover_path.endswith(".mp3")):
+                if(payload_path == ""): #using input typed in from user
                     output_path = encoding_audio(inputValue_payload,cover_path,selectedLSB)
                     previewSound(output_path, 3)
                 else:
                     output_path = encoding_audio(payload_path,cover_path,selectedLSB)
                     previewSound(output_path, 3)
-                tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as audio_encoded.wav") # Success message pop up
+                tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as audio_encoded.wav in output folder") # Success message pop up
             if(cover_path.endswith(".mp4") or cover_path.endswith(".mkv") or cover_path.endswith(".mov") or cover_path.endswith(".avi")):#If cover is video (MUST INSTALL ffmpeg @ https://windowsloop.com/install-ffmpeg-windows-10/)
                 try:
                     en = Encode(cover_path, payload_path, selectedLSB+1)
@@ -116,8 +140,6 @@ def vp_start_gui():
                     tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as video_encoded.mp4") # Success message pop up
                 except ValueError:
                     tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Payload larger than cover object.") # Error
-
-
         elif(payload_flag == 1 and cover_object_flag == 0):
             tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Cover object missing.") # Error message pop up
         elif(payload_flag == 0 and cover_object_flag == 1):
@@ -143,11 +165,7 @@ def vp_start_gui():
                 tbox_output.insert("end", secret_text)
             if(stego_path.endswith(".wav")):
                 secret_text = decoding_audio(stego_path,selectedLSB)
-                #output is in text form but not in a txt file
-                tbox_output = tk.Text(window, background="#ffffff")
-                tbox_output.place(x=70,y=359,width=(471-70),height=(712-359))
-                tbox_output.insert("end", secret_text)
-                if(secret_text.endswith(".png")): #if secret is an image
+                if(secret_text.endswith(".png") or secret_text.endswith(".jpg") or secret_text.endswith(".bmp")): #if secret is an image
                     previewImage(secret_text,3)
             if(stego_path.endswith(".mp4") or stego_path.endswith(".mkv") or stego_path.endswith(".mov") or stego_path.endswith(".avi")):#if stego is video
                 de = Decode(stego_path, selectedLSB+1)#Create a decode object (according to JW's algo)
@@ -161,8 +179,6 @@ def vp_start_gui():
                     previewVideo(path_output, 3)
                 elif(output_ext == ".mp3" or output_ext == ".wav"):
                     previewSound(path_output, 3)
-
-                
             tk.messagebox.showinfo(title="Success!", message="Decoding successful!") # Success message pop up
              
         else:
@@ -326,10 +342,10 @@ def vp_start_gui():
         global audio_paused_cover
         global cover_audio
         print("coverpath is", cover_path)
-        if(cover_path.endswith(".mp3") and audio_paused_cover == False): #if audio is unpaused, play it from the start if play button is hit
+        if(cover_path.endswith(".mp3") or cover_path.endswith(".wav") and audio_paused_cover == False): #if audio is unpaused, play it from the start if play button is hit
             audio = pygame.mixer.Sound(cover_path)
             cover_audio.play(audio, loops=0)
-        elif(cover_path.endswith(".mp3") and audio_paused_cover == True): #if audio is paused, unpause it
+        elif(cover_path.endswith(".mp3") or cover_path.endswith(".wav") and audio_paused_cover == True): #if audio is paused, unpause it
             cover_audio.unpause()
             audio_paused_cover = False
         else:
@@ -341,7 +357,7 @@ def vp_start_gui():
         global videoplayer_coverobj
         global cover_path
         global audio_paused_cover
-        if(cover_path.endswith(".mp3")):
+        if(cover_path.endswith(".mp3") or cover_path.endswith(".wav")):
             audio_paused_cover = True
             cover_audio.pause()
         else:
@@ -354,10 +370,10 @@ def vp_start_gui():
         global payload_path
         global audio_paused_payload
         global payload_audio
-        if(payload_path.endswith(".mp3") and audio_paused_payload == False):
+        if(payload_path.endswith(".mp3") or payload_path.endswith(".wav") and audio_paused_payload == False):
             audio = pygame.mixer.Sound(payload_path)
             payload_audio.play(audio, loops=0)
-        elif(payload_path.endswith(".mp3") and audio_paused_payload == True):
+        elif(payload_path.endswith(".mp3") or payload_path.endswith(".wav") and audio_paused_payload == True):
             payload_audio.unpause()
             audio_paused_payload = False
         else:
@@ -369,7 +385,7 @@ def vp_start_gui():
         global videoplayer_payload
         global payload_path
         global audio_paused_payload
-        if(payload_path.endswith(".mp3")):
+        if(payload_path.endswith(".mp3") or payload_path.endswith(".wav")):
             audio_paused_payload = True
             payload_audio.pause()
         else:
@@ -382,10 +398,10 @@ def vp_start_gui():
         global stego_path
         global audio_paused_stego
         global stego_audio
-        if(stego_path.endswith(".mp3") and audio_paused_stego == False):
+        if(stego_path.endswith(".mp3") or stego_path.endswith(".wav") and audio_paused_stego == False):
             audio = pygame.mixer.Sound(stego_path)
             stego_audio.play(audio, loops=0)
-        elif(stego_path.endswith(".mp3") and audio_paused_stego == True):
+        elif(stego_path.endswith(".mp3") or stego_path.endswith(".wav") and audio_paused_stego == True):
             stego_audio.unpause()
             audio_paused_stego = False
         else:
@@ -397,7 +413,7 @@ def vp_start_gui():
         global videoplayer_stego
         global stego_path
         global audio_paused_stego
-        if(stego_path.endswith(".mp3")):
+        if(stego_path.endswith(".mp3") or stego_path.endswith(".wav")):
             audio_paused_stego = True
             stego_audio.pause()
         else:
@@ -407,13 +423,13 @@ def vp_start_gui():
     # Play video and audio for output
     def playAgain_output():
         global videoplayer_output
-        global path_output
+        global output_path
         global audio_paused_output
         global output_audio
-        if(path_output.endswith(".mp3") or path_output.endswith(".wav") and audio_paused_output == False):
-            audio = pygame.mixer.Sound(path_output)
+        if(output_path.endswith(".mp3") or output_path.endswith(".wav") and audio_paused_output == False):
+            audio = pygame.mixer.Sound(output_path)
             output_audio.play(audio, loops=0)
-        elif(path_output.endswith(".mp3") or path_output.endswith(".wav") and audio_paused_output == True):
+        elif(output_path.endswith(".mp3") or output_path.endswith(".wav") and audio_paused_output == True):
             output_audio.unpause()
             audio_paused_output = False
         else:
@@ -423,9 +439,9 @@ def vp_start_gui():
     # Pause video and audio for output
     def pauseVideo_output():
         global videoplayer_output
-        global path_output
+        global output_path
         global audio_paused_output
-        if(path_output.endswith(".mp3") or path_output.endswith(".wav")):
+        if(output_path.endswith(".mp3") or output_path.endswith(".wav")):
             audio_paused_output = True
             output_audio.pause()
         else:

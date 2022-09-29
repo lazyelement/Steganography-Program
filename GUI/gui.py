@@ -90,15 +90,37 @@ def vp_start_gui():
                 tbox_output.insert("end", encodedText)
                 # save output into textfile
                 saveTxtToFile(encodedText,"encodedText")
-                tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encodedText.txt") # Success message pop up
-            # text for payload and cover but both user input    
+                tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encodedText.txt in output folder") # Success message pop up
+            # payload is txt cover is input
+            if(cover_path == "" and payload_path.endswith(".txt")):
+                with open(payload_path, encoding="utf8", errors='ignore') as file:
+                    for line in file:
+                            payload = line.strip()
+                # do encoding show encoded text in output box
+                encodedText = encode(inputValue_cover,payload,selectedLSB)
+                tbox_output.insert("end", encodedText)
+                # save output into textfile
+                saveTxtToFile(encodedText,"encodedText")
+                tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encodedText.txt in output folder") # Success message pop up
+             # cover is txt payload is input
+            if(payload_path == "" and cover_path.endswith(".txt")):
+                with open(cover_path, encoding="utf8", errors='ignore') as file:
+                    for line in file:
+                            cover = line.strip()
+                # do encoding show encoded text in output box
+                encodedText = encode(cover,inputValue_payload,selectedLSB)
+                tbox_output.insert("end", encodedText)
+                # save output into textfile
+                saveTxtToFile(encodedText,"encodedText")
+                tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encodedText.txt in output folder") # Success message pop up
+            # payload and cover both user input    
             if(cover_path == "" and payload_path == ""):
                 # do encoding show encoded text in output box
                 encodedText = encode(inputValue_cover,inputValue_payload,selectedLSB)
                 tbox_output.insert("end", encodedText)
                  # save output into textfile
                 saveTxtToFile(encodedText,"encodedText")
-                tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encodedText.txt") # Success message pop up
+                tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encodedText.txt in output folder") # Success message pop up
             # Payload is anything. cover is audio
             if(cover_path.endswith(".wav") or cover_path.endswith(".mp3")):
                 if(payload_path == ""): #using input typed in from user
@@ -107,7 +129,7 @@ def vp_start_gui():
                 else:
                     output_path = encoding_audio(payload_path,cover_path,selectedLSB)
                     previewSound(output_path, 3)
-                tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as audio_encoded.wav") # Success message pop up
+                tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as audio_encoded.wav in output folder") # Success message pop up
         elif(payload_flag == 1 and cover_object_flag == 0):
             tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Cover object missing.") # Error message pop up
         elif(payload_flag == 0 and cover_object_flag == 1):
@@ -132,7 +154,7 @@ def vp_start_gui():
                 tbox_output.insert("end", secret_text)
             if(stego_path.endswith(".wav")):
                 secret_text = decoding_audio(stego_path,selectedLSB)
-                if(secret_text.endswith(".png")): #if secret is an image
+                if(secret_text.endswith(".png") or secret_text.endswith(".jpg") or secret_text.endswith(".bmp")): #if secret is an image
                     previewImage(secret_text,3)
                 elif(secret_text.endswith(".mp4")): #if secret is a video
                     previewVideo(secret_text,3)

@@ -62,7 +62,6 @@ class Decode:
 
             
             # Stop decoding after we have reached the delimeter which is "#####"
-            print('1')
             if decodedData[-5:] == "#####":
                     break
 
@@ -90,45 +89,51 @@ class Decode:
                         binaryData += b[-self.numOfBits:] #extracting data from the LSB of blue pixel based on bits specified by user
                         binaryData += a[-self.numOfBits:] #extracting data from the LSB of black pixel based on bits specified by user
             
-            print('2')
             # split the binary data to groups of 8
             allBytes = [binaryData[i: i+8] for i in range(0, len(binaryData), 8)]
             
-            print('3')
             # convert from bits to characters
             for byte in allBytes:
                 decodedData += chr(int(byte, 2))
                 # Stop decoding after we have reached the delimeter which is "#####"
-                # if "#####" in decodedData:
-                #     break
                 if decodedData[-5:] == "#####":
-                    print('4')
                     break
-            print('5')
+                
         # Removes delimeter
         decodedData = decodedData[:-5]
-        # Get the file extension and removes it
-        fileExt = decodedData[-10:]
-        decodedData = decodedData[:-10]
-        # Remove padding from file extention
-        fileExt = fileExt.replace("@", "")
+        # Check if payload is a file or text
+        if decodedData[-1:] == '$':
+            # Remove '$' from decoded data
+            decodedData = decodedData[:-1]
+            # Converts the hidden data back to text from a Base64 format
+            decodedData = base64.b64decode(eval(decodedData))
+            decodedData = decodedData.decode('utf-8')
+        else:
+            # Get the file extension and removes it
+            fileExt = decodedData[-10:]
+            decodedData = decodedData[:-10]
+            # Remove padding from file extention
+            fileExt = fileExt.replace("@", "")
 
-        # Converts the hidden data back to a file from a Base64 format
-        decodedData = base64.b64decode(eval(decodedData))
+            # Converts the hidden data back to a file from a Base64 format
+            decodedData = base64.b64decode(eval(decodedData))
 
-        # Write the decoded data back to a file and saves it
-        decodedImgName = input("Filename to save as (Without file extension): ")
-        with open(decodedImgName + fileExt, "wb") as outFile:
-            outFile.write(decodedData)
+            # Write the decoded data back to a file and saves it
+            decodedImgName = input("Filename to save as (Without file extension): ")
+            with open(decodedImgName + fileExt, "wb") as outFile:
+                outFile.write(decodedData)
+            decodedData = ""
 
         # Clears the temp folder
         if os.path.exists("./tmp"):
             shutil.rmtree("./tmp")
+
+        return decodedData
 
 filename = input("Enter file name to decode: ")
 filepath = os.path.join(os.getcwd(), filename)
 
 numOfBits = int(input("Enter number of LSB to use: "))
 de = Decode(filepath, numOfBits)
-de.showData()
+print(de.showData())
 

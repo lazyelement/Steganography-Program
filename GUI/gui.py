@@ -79,7 +79,7 @@ def vp_start_gui():
             #create output box
             tbox_output = tk.Text(window, background="#ffffff")
             tbox_output.place(x=70,y=359,width=(471-70),height=(712-359))
-            # text as cover & payload
+            # txt as cover & payload
             if(cover_path.endswith(".txt") and payload_path.endswith(".txt")):
                 with open(cover_path, encoding="utf8", errors='ignore') as file:
                     for line in file:
@@ -165,6 +165,9 @@ def vp_start_gui():
                 tbox_output.insert("end", secret_text)
             if(stego_path.endswith(".wav")):
                 secret_text = decoding_audio(stego_path,selectedLSB)
+                tbox_output = tk.Text(window, background="#ffffff")
+                tbox_output.place(x=70,y=359,width=(471-70),height=(712-359))
+                tbox_output.insert("end", secret_text)
                 if(secret_text.endswith(".png") or secret_text.endswith(".jpg") or secret_text.endswith(".bmp")): #if secret is an image
                     previewImage(secret_text,3)
             if(stego_path.endswith(".mp4") or stego_path.endswith(".mkv") or stego_path.endswith(".mov") or stego_path.endswith(".avi")):#if stego is video

@@ -138,6 +138,7 @@ def vp_start_gui():
                     output_ext = en.hideData()
                     video_encoded_path = "video_encoded"+output_ext
                     previewVideo(video_encoded_path, 3)
+                    tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as video_encoded.mp4") # Success message pop up
                 else:
                     try:
                         en = Encode(cover_path, payload_path, selectedLSB+1, True)

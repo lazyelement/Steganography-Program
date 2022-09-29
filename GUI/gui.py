@@ -92,7 +92,7 @@ def vp_start_gui():
                 tbox_output.insert("end", encodedText)
                 # save output into textfile
                 saveTxtToFile(encodedText,"encodedText")
-                tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encodedText.txt in output folder") # Success message pop up
+                tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encodedText.txt") # Success message pop up
             # payload is txt cover is input
             if(cover_path == "" and payload_path.endswith(".txt")):
                 with open(payload_path, encoding="utf8", errors='ignore') as file:
@@ -103,7 +103,7 @@ def vp_start_gui():
                 tbox_output.insert("end", encodedText)
                 # save output into textfile
                 saveTxtToFile(encodedText,"encodedText")
-                tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encodedText.txt in output folder") # Success message pop up
+                tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encodedText.txt") # Success message pop up
              # cover is txt payload is input
             if(payload_path == "" and cover_path.endswith(".txt")):
                 with open(cover_path, encoding="utf8", errors='ignore') as file:
@@ -114,7 +114,7 @@ def vp_start_gui():
                 tbox_output.insert("end", encodedText)
                 # save output into textfile
                 saveTxtToFile(encodedText,"encodedText")
-                tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encodedText.txt in output folder") # Success message pop up
+                tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encodedText.txt") # Success message pop up
             # payload and cover both user input    
             if(cover_path == "" and payload_path == ""):
                 # do encoding show encoded text in output box
@@ -122,7 +122,7 @@ def vp_start_gui():
                 tbox_output.insert("end", encodedText)
                  # save output into textfile
                 saveTxtToFile(encodedText,"encodedText")
-                tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encodedText.txt in output folder") # Success message pop up
+                tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encodedText.txt in") # Success message pop up
             # Payload is anything. cover is audio
             if(cover_path.endswith(".wav") or cover_path.endswith(".mp3")):
                 if(payload_path == ""): #using input typed in from user
@@ -131,7 +131,7 @@ def vp_start_gui():
                 else:
                     output_path = encoding_audio(payload_path,cover_path,selectedLSB)
                     previewSound(output_path, 3)
-                tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as audio_encoded.wav in output folder") # Success message pop up
+                tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as audio_encoded.wav") # Success message pop up
             if(cover_path.endswith(".mp4") or cover_path.endswith(".mkv") or cover_path.endswith(".mov") or cover_path.endswith(".avi")):#If cover is video (MUST INSTALL ffmpeg @ https://windowsloop.com/install-ffmpeg-windows-10/)
                 try:
                     en = Encode(cover_path, payload_path, selectedLSB+1)

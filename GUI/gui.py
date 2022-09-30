@@ -144,7 +144,9 @@ def vp_start_gui():
                     try:#if input is a file path
                         en = Encode(cover_path, payload_path, selectedLSB+1, True)
                         output_ext = en.hideData()
+                        print(output_ext)
                         output_path = "video_encoded"+output_ext
+                        print(output_path)
                         previewVideo(output_path, 3)
                         tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as video_encoded.mp4") # Success message pop up
                     except ValueError:

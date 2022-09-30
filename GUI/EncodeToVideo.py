@@ -231,9 +231,9 @@ class Encode:
             shutil.rmtree("./tmp")
         return coverExt
 
-# coverFile = input("Enter cover video file name: ")
-# payloadFile = input("Enter payload object file name: ")
-# numOfBits = int(input("Enter number of LSB to use: "))
+# coverFile = r"C:\Users\chewc\Videos\AVItest.avi"
+# payloadFile = r"C:\Users\chewc\OneDrive\Desktop\RANDOM.txt"
+# numOfBits = 1
 
 # en = Encode(coverFile, payloadFile, numOfBits, False)
-# en.hideData()
+# print(en.hideData())

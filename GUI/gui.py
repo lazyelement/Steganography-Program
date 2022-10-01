@@ -30,6 +30,7 @@ from text2textSteg import *
 from LSBaudio_modify import *
 from EncodeToVideo import *
 from DecodeFromVideo import *
+from imageSteganography import *
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path("./assets") 
@@ -151,6 +152,24 @@ def vp_start_gui():
                         tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as video_encoded.mp4") # Success message pop up
                     except ValueError:
                         tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Payload larger than cover object.") # Error
+            if(cover_path.endswith(".png") or cover_path.endswith(".jpg")):
+                if(payload_path == ""):
+                    with open('tmp.txt', 'w') as f:
+                        f.write(inputValue_payload)
+                    output_path = encode_img(cover_path, 'tmp.txt', selectedLSB+1)
+                    if os.path.exists("tmp.txt"):
+                        os.remove("tmp.txt")
+                    previewImage(output_path, 3)
+                    tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved in same file location, named (originalname)_encoded.png") # Success message pop up
+                else:
+                    try:#if input is a file path
+                        output_path = encode_img(cover_path, payload_path, selectedLSB+1)
+                        previewImage(output_path, 3)
+                        tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved in same file location, named (originalname)_encoded.png") # Success message pop up
+                    except ValueError:
+                        tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Payload larger than cover object.") # Error
+                
+
         elif(payload_flag == 1 and cover_object_flag == 0):
             tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Cover object missing.") # Error message pop up
         elif(payload_flag == 0 and cover_object_flag == 1):
@@ -197,7 +216,20 @@ def vp_start_gui():
                 else:
                     output_path = 'video_decoded.txt'
                     previewText(output_path, 3)
-            tk.messagebox.showinfo(title="Success!", message="Decoding successful!") # Success message pop up
+            if(stego_path.endswith(".png") or stego_path.endswith(".jpg")):
+                output_path = decode_img(stego_path, selectedLSB+1)
+                print(output_path)
+                if(output_path.endswith(".txt") or output_path.endswith(".docx") or output_path.endswith(".xlsx")):
+                    previewText(output_path, 3)
+                elif(output_path.endswith(".png") or output_path.endswith(".jpg") or output_path.endswith(".bmp")):
+                    previewImage(output_path, 3)
+                elif(output_path.endswith(".mp4") or output_path.endswith(".mov")):
+                    previewVideo(output_path, 3)
+                elif(output_path.endswith(".mp3") or output_path.endswith(".wav")):
+                    previewSound(output_path, 3)
+                
+                
+            tk.messagebox.showinfo(title="Success!", message="Decoding successful! Payload in same directory as stego object.") # Success message pop up
              
         else:
             tk.messagebox.showerror(title="Failed to decode", message="Decoding unsuccessful. Stego object missing.") # Error message pop up

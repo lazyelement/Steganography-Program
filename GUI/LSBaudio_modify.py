@@ -3,239 +3,196 @@
 #The payload has to be in .txt/.xlsx/.xls/.docx format
 
 import os
-import docx2txt
-import pandas as pd #pip install pandas
+import numpy as np
 import wave
-from pathlib import Path
+import base64
+import shutil
+from subprocess import call,STDOUT
 from os.path import join
 
-OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path("./output") 
+# convert data to binary
+def dataToBin(data):
+    if type(data) == str:
+        return ''.join([format(ord(i), "08b") for i in data])
+    elif type(data) == bytes or type(data) == np.ndarray:
+        return [format(i, "08b") for i in data]
+    elif type(data) == int or type(data) == np.uint8:
+        return format(data, "08b")
+    else:
+        # Input type not able to be changed to binary
+        raise TypeError("Input type not supported")
 
-#get file extension
-def file_type(data):
-    #Find extension of file
-    split_up = os.path.splitext(data)
-    file_extension = split_up[1]
-    return file_extension
+def encoding_audio(payload,audio_file,LSB_bit,isPath):
+    # Check if payload is a file
+    if isPath:
+        # Get path of payload file
+        payloadPath = os.path.join(os.getcwd(), payload)
 
-#to change file type to txt
-def convert_to_txt(file_extension,data):
-    #if format is excel
-    if '.xlsx' in file_extension:
-        xl = pd.ExcelFile(data)
+        # Find extension of payload file
+        payloadExt = os.path.splitext(payloadPath)[1]
 
-        for sheet in xl.sheet_names:
-            file = pd.read_excel(xl,sheet_name=sheet)
-            file.to_csv("payload"+'.txt',index=False)
-        text_file = open("payload.txt", "r")
-        payload = text_file.read()
-        text_file.close()
-    elif '.xls' in file_extension:
-        xl = pd.ExcelFile(data)
+        # Add padding to file extention untill there is 10 characters
+        while len(payloadExt) < 10:
+            payloadExt += '@'
 
-        for sheet in xl.sheet_names:
-            file = pd.read_excel(xl,sheet_name=sheet)
-            file.to_csv("payload"+'.txt',index=False)
-        text_file = open("payload.txt", "r")
-        payload = text_file.read()
-        text_file.close()
-    #if format is .docx
-    elif '.docx' in file_extension:
-        text = docx2txt.process(data)
-        with open("payload.txt", "w") as text_file:
-            print(text, file=text_file)
-    elif '.txt' in file_extension:
-        with open(data, "r") as input:
-            # Creating "gfg output file.txt" as output
-            # file in write mode
-            with open("payload.txt", "w") as output:
-                
-                # Writing each line from input file to
-                # output file using loop
-                for line in input:
-                    output.write(line)
+        # Opens the payload file and encodes it into a Base64 format
+        payloadB64 = ''
+        with open(payloadPath, "rb") as payload:
+            payloadB64 = base64.b64encode(payload.read())
 
-def encoding_audio(payload,audio_file,LSB_bit):
+        # Converts the encoded Base64 payload into a string and adds the file extention and the delimeter to indicate the end of the file
+        payloadEncode = str(payloadB64) + payloadExt + "#####"
+    # If payload is a string
+    else:
+        payloadString = payload
+        # Encodes the payload into a Base64 format
+        payloadB64 = base64.b64encode(payloadString.encode('utf-8'))
+        # Converts the encoded Base64 payload into a string and adds the delimeter to indicate the end of the file
+        payloadEncode = str(payloadB64) + '$' + '#####'
+
+    # Get path of cover audio
+    audioPath = os.path.join(os.getcwd(), audio_file)
+    
+    # Find extension of cover audio
+    audioExt = os.path.splitext(audioPath)[1]
+
+    # If cover audio is not in wav format
+    if(audioExt != '.wav'):
+        # Create a temp folder if it does not exist
+        if not os.path.exists("./tmp"):
+            os.makedirs("tmp")
+
+        # Convert audio into wav format
+        call(["ffmpeg", "-i", audioPath, "tmp/tempaudio.wav", "-y"],stdout=open(os.devnull, "w"), stderr=STDOUT)
+        audioPath = os.path.join(os.getcwd(), "tmp/tempaudio.wav")
+
     #Reading cover audio file
-    cover_audio = wave.open(audio_file, mode='rb')
-    #Reading frames and converting it to byte array
+    cover_audio = wave.open(audioPath, mode='rb')
+    #Reading audio frames and converting it to byte array
     audio_bytearray = bytearray(list(cover_audio.readframes(cover_audio.getnframes())))
 
-    #Reading the payload
-    if(payload.endswith(".txt")):
-        text_file = open(payload, "r")
-        payload = text_file.read()
-        text_file.close()
-    else:
-        payload = payload
+    # Converts the encoded payload string to binary format
+    payloadBin = dataToBin(payloadEncode)
 
-    #Adding extra data ('#') to fill out rest of the bytes
-    string = payload + int((len(audio_bytearray)-(len(payload)*8*8))/8) *'#'
-    #Converting text to binary list
-    binary_list = list(map(int, ''.join([bin(ord(i)).lstrip('0b').rjust(8,'0') for i in string])))
+    # check if audio_bytearray is big enough for payloadBin
+    if len(payloadBin) / LSB_bit > len(audio_bytearray):
+        raise ValueError("[!] Insufficient bytes, need bigger cover audio")
 
-    # Actual encoding
-    # LSB Replacement of the audio data by one bit from audio_bytearray
-    if LSB_bit == 0:
-        for i, bit in enumerate(binary_list):
-            audio_bytearray[i] = (audio_bytearray[i] & 254) | bit
-    elif LSB_bit == 1:
-        for i, bit in enumerate(binary_list):
-            audio_bytearray[i] = (audio_bytearray[i] & 253) | binary_list[bit+1] #to take 2nd number in binary list
-        for i, bit in enumerate(binary_list):
-            audio_bytearray[i] = (audio_bytearray[i] & 254) | bit
-    elif LSB_bit == 2:
-        for i, bit in enumerate(binary_list):
-            audio_bytearray[i] = (audio_bytearray[i] & 251) | binary_list[bit+2]#to take 3rd number in binary list
-        for i, bit in enumerate(binary_list):
-            audio_bytearray[i] = (audio_bytearray[i] & 253) | binary_list[bit+1]
-        for i, bit in enumerate(binary_list):
-            audio_bytearray[i] = (audio_bytearray[i] & 254) | bit
-    elif LSB_bit == 3:
-        for i, bit in enumerate(binary_list):
-            audio_bytearray[i] = (audio_bytearray[i] & 247) | binary_list[bit+3]#to take 4th number in binary list
-        for i, bit in enumerate(binary_list):
-            audio_bytearray[i] = (audio_bytearray[i] & 251) | binary_list[bit+2]
-        for i, bit in enumerate(binary_list):
-            audio_bytearray[i] = (audio_bytearray[i] & 253) | binary_list[bit+1]
-        for i, bit in enumerate(binary_list):
-            audio_bytearray[i] = (audio_bytearray[i] & 254) | bit
-    elif LSB_bit == 4:
-        for i, bit in enumerate(binary_list):
-            audio_bytearray[i] = (audio_bytearray[i] & 239) | binary_list[bit+4]#to take 5th number in binary list
-        for i, bit in enumerate(binary_list):
-            audio_bytearray[i] = (audio_bytearray[i] & 247) | binary_list[bit+3]
-        for i, bit in enumerate(binary_list):
-            audio_bytearray[i] = (audio_bytearray[i] & 251) | binary_list[bit+2]
-        for i, bit in enumerate(binary_list):
-            audio_bytearray[i] = (audio_bytearray[i] & 253) | binary_list[bit+1]
-        for i, bit in enumerate(binary_list):
-            audio_bytearray[i] = (audio_bytearray[i] & 254) | bit
-    elif LSB_bit == 5:
-        for i, bit in enumerate(binary_list):
-            audio_bytearray[i] = (audio_bytearray[i] & 223) | binary_list[bit+5]#to take 6th number in binary list
-        for i, bit in enumerate(binary_list):
-            audio_bytearray[i] = (audio_bytearray[i] & 239) | binary_list[bit+4]
-        for i, bit in enumerate(binary_list):
-            audio_bytearray[i] = (audio_bytearray[i] & 247) | binary_list[bit+3]
-        for i, bit in enumerate(binary_list):
-            audio_bytearray[i] = (audio_bytearray[i] & 251) | binary_list[bit+2]
-        for i, bit in enumerate(binary_list):
-            audio_bytearray[i] = (audio_bytearray[i] & 253) | binary_list[bit+1]
-        for i, bit in enumerate(binary_list):
-            audio_bytearray[i] = (audio_bytearray[i] & 254) | bit
-    elif LSB_bit == 6:
-        for i, bit in enumerate(binary_list):
-            audio_bytearray[i] = (audio_bytearray[i] & 191) | binary_list[bit+6]#to take 7th number in binary list
-        for i, bit in enumerate(binary_list):
-            audio_bytearray[i] = (audio_bytearray[i] & 223) | binary_list[bit+5]
-        for i, bit in enumerate(binary_list):
-            audio_bytearray[i] = (audio_bytearray[i] & 239) | binary_list[bit+4]
-        for i, bit in enumerate(binary_list):
-            audio_bytearray[i] = (audio_bytearray[i] & 247) | binary_list[bit+3]
-        for i, bit in enumerate(binary_list):
-            audio_bytearray[i] = (audio_bytearray[i] & 251) | binary_list[bit+2]
-        for i, bit in enumerate(binary_list):
-            audio_bytearray[i] = (audio_bytearray[i] & 253) | binary_list[bit+1]
-        for i, bit in enumerate(binary_list):
-            audio_bytearray[i] = (audio_bytearray[i] & 254) | bit
-    elif LSB_bit == 7:
-        for i, bit in enumerate(binary_list):
-            audio_bytearray[i] = (audio_bytearray[i] & 127) | binary_list[bit+7]#to take 8th number in binary list
-        for i, bit in enumerate(binary_list):
-            audio_bytearray[i] = (audio_bytearray[i] & 191) | binary_list[bit+6]
-        for i, bit in enumerate(binary_list):
-            audio_bytearray[i] = (audio_bytearray[i] & 223) | binary_list[bit+5]
-        for i, bit in enumerate(binary_list):
-            audio_bytearray[i] = (audio_bytearray[i] & 239) | binary_list[bit+4]
-        for i, bit in enumerate(binary_list):
-            audio_bytearray[i] = (audio_bytearray[i] & 247) | binary_list[bit+3]
-        for i, bit in enumerate(binary_list):
-            audio_bytearray[i] = (audio_bytearray[i] & 251) | binary_list[bit+2]
-        for i, bit in enumerate(binary_list):
-            audio_bytearray[i] = (audio_bytearray[i] & 253) | binary_list[bit+1]
-        for i, bit in enumerate(binary_list):
-            audio_bytearray[i] = (audio_bytearray[i] & 254) | bit
-    #Get the replaced bytes
-    frame_replaced = bytes(audio_bytearray)
+    print("Length of cover in Bytes:", len(audio_bytearray))
+    print("Length of payload (with delimeter) in Binary:", len(payloadBin)/ LSB_bit)
     
-    #Writing bytes to a new wave audio file, can use mp3 too
+    # Get the length of the encoded payload binary
+    payloadLen = len(payloadBin)
+
+    # Setting a local variable to point to the binary value to encode in each iteration
+    dataIndex = 0
+
+    print ("[*] Encoding data... \n")
+    for i,byte in enumerate(audio_bytearray):
+        # If there is still more data to store
+        if dataIndex < payloadLen:
+            tempBin = ''
+            byte = dataToBin(byte)
+            # Remove the last few digits of the byte based on the number of LSB used
+            byte = byte[:-LSB_bit]
+            # Loop and store the data to hide into a temp variable
+            for x in range(LSB_bit):
+                tempBin += payloadBin[dataIndex]
+                dataIndex += 1
+                # Break the loop if all the data have been hidden
+                if dataIndex == payloadLen:
+                    break
+            # Pad 0 to the front of the temp binary if the length of the temp binary is less than the number of LSB used
+            if len(tempBin) < LSB_bit:
+                tempBin = tempBin.ljust(LSB_bit, '0')
+            # Adds the temp binary to the byte and change it into an integer and assign it to the back to the array of bytes
+            audio_bytearray[i] = int(byte + tempBin, 2)
+
+    # path for output
     path=os.path.join(os.path.join(os.path.expanduser('~')), 'Desktop'), # set path to open desktop
     name = 'audio_encoded.wav'
     path = ''.join(path)
-    with wave.open(join(path, name), 'wb') as fd:
-        fd.setparams(cover_audio.getparams())
-        fd.writeframes(frame_replaced)
-    cover_audio.close()
     output_path = join(path, name)
+
+    # Writing bytes to a new wave audio file, can use mp3 too
+    with wave.open(output_path, 'wb') as fd:
+        fd.setparams(cover_audio.getparams())
+        fd.writeframes(audio_bytearray)
+
+    print("Encoding Successful\n")
+    
+    # Closes the cover audio
+    cover_audio.close()
+    
+
+    # Clears the temp folder
+    if os.path.exists("./tmp"):
+        shutil.rmtree("./tmp")
+        
     return(output_path)
 
-def decoding_audio(audio_path,LSB_bit):
-    embedded_audio = wave.open(audio_path, mode='rb')
+def decoding_audio(stego_path,LSB_bit):
+    # Opens the embedded audio
+    embedded_audio = wave.open(stego_path, mode='rb')
     #Reading frames and converting it to byte array
     audio_bytearray = bytearray(list(embedded_audio.readframes(embedded_audio.getnframes())))
 
-    if LSB_bit == 0:
-        # Extract LSB of each byte
-        extracted_LSB = [audio_bytearray[i] & 1 for i in range(len(audio_bytearray))]
-    elif LSB_bit == 1:
-        extracted_LSB = [(audio_bytearray[i] >> 1) & 1 for i in range(len(audio_bytearray))]
-        extracted_LSB = [audio_bytearray[i] & 1 for i in range(len(audio_bytearray))]
-    elif LSB_bit == 2:
-        extracted_LSB = [(audio_bytearray[i] >> 2) & 1 for i in range(len(audio_bytearray))]
-        extracted_LSB = [(audio_bytearray[i] >> 1) & 1 for i in range(len(audio_bytearray))]
-        extracted_LSB = [audio_bytearray[i] & 1 for i in range(len(audio_bytearray))]
-    elif LSB_bit == 3:
-        extracted_LSB = [(audio_bytearray[i] >> 3) & 1 for i in range(len(audio_bytearray))]
-        extracted_LSB = [(audio_bytearray[i] >> 2) & 1 for i in range(len(audio_bytearray))]
-        extracted_LSB = [(audio_bytearray[i] >> 1) & 1 for i in range(len(audio_bytearray))]
-        extracted_LSB = [audio_bytearray[i] & 1 for i in range(len(audio_bytearray))]
-    elif LSB_bit == 4:
-        extracted_LSB = [(audio_bytearray[i] >> 4) & 1 for i in range(len(audio_bytearray))]
-        extracted_LSB = [(audio_bytearray[i] >> 3) & 1 for i in range(len(audio_bytearray))]
-        extracted_LSB = [(audio_bytearray[i] >> 2) & 1 for i in range(len(audio_bytearray))]
-        extracted_LSB = [(audio_bytearray[i] >> 1) & 1 for i in range(len(audio_bytearray))]
-        extracted_LSB = [audio_bytearray[i] & 1 for i in range(len(audio_bytearray))]
-    elif LSB_bit == 5:
-        extracted_LSB = [(audio_bytearray[i] >> 5) & 1 for i in range(len(audio_bytearray))]
-        extracted_LSB = [(audio_bytearray[i] >> 4) & 1 for i in range(len(audio_bytearray))]
-        extracted_LSB = [(audio_bytearray[i] >> 3) & 1 for i in range(len(audio_bytearray))]
-        extracted_LSB = [(audio_bytearray[i] >> 2) & 1 for i in range(len(audio_bytearray))]
-        extracted_LSB = [(audio_bytearray[i] >> 1) & 1 for i in range(len(audio_bytearray))]
-        extracted_LSB = [audio_bytearray[i] & 1 for i in range(len(audio_bytearray))]
-    elif LSB_bit == 6:
-        extracted_LSB = [(audio_bytearray[i] >> 6) & 1 for i in range(len(audio_bytearray))]
-        extracted_LSB = [(audio_bytearray[i] >> 5) & 1 for i in range(len(audio_bytearray))]
-        extracted_LSB = [(audio_bytearray[i] >> 4) & 1 for i in range(len(audio_bytearray))]
-        extracted_LSB = [(audio_bytearray[i] >> 3) & 1 for i in range(len(audio_bytearray))]
-        extracted_LSB = [(audio_bytearray[i] >> 2) & 1 for i in range(len(audio_bytearray))]
-        extracted_LSB = [(audio_bytearray[i] >> 1) & 1 for i in range(len(audio_bytearray))]
-        extracted_LSB = [audio_bytearray[i] & 1 for i in range(len(audio_bytearray))]
-    if LSB_bit == 7:
-        extracted_LSB = [(audio_bytearray[i] >> 7) & 1 for i in range(len(audio_bytearray))]
-        extracted_LSB = [(audio_bytearray[i] >> 6) & 1 for i in range(len(audio_bytearray))]
-        extracted_LSB = [(audio_bytearray[i] >> 5) & 1 for i in range(len(audio_bytearray))]
-        extracted_LSB = [(audio_bytearray[i] >> 4) & 1 for i in range(len(audio_bytearray))]
-        extracted_LSB = [(audio_bytearray[i] >> 3) & 1 for i in range(len(audio_bytearray))]
-        extracted_LSB = [(audio_bytearray[i] >> 2) & 1 for i in range(len(audio_bytearray))]
-        extracted_LSB = [(audio_bytearray[i] >> 1) & 1 for i in range(len(audio_bytearray))]
-        extracted_LSB = [audio_bytearray[i] & 1 for i in range(len(audio_bytearray))]
+    print ("[*] Decoding data... \n")
+    # Extract the LSB based on the value defined by the user
+    binaryData = ''
+    for i,byte in enumerate(audio_bytearray):
+        bin = dataToBin(byte)
+        binaryData += bin[-LSB_bit:]
     
-    #Convert byte array back to string
-    embedded_text = "".join(chr(int("".join(map(str,extracted_LSB[i:i+8])),2)) for i in range(0,len(extracted_LSB),8))
-    #Cut off at the filler characters
-    decoded_text = embedded_text.split("###")[0]
-    print("You encoded with " , LSB_bit , " and it works..... bitch")
-    # Print the extracted text
-    print("Payload is: "+decoded_text)
-    embedded_audio.close()
-    return decoded_text
+    # split the binary data to groups of 8
+    allBytes = [binaryData[i: i + 8] for i in range(0, len(binaryData), 8)]
 
-# data = "input.xls"
-# convert_to_txt(file_type(data),data)
+    # converting from bits to characters  
+    decodedData = ""  
+    for bytes in allBytes:  
+        decodedData += chr(int(bytes, 2))  
+        # checking if we have reached the delimiter which is "#####"  
+        if decodedData[-5:] == "#####":  
+            break
+
+    # Removes delimeter
+    decodedData = decodedData[:-5]
+    # Check if payload is a file or text
+    if decodedData[-1:] == '$':
+        # Remove '$' from decoded data
+        decodedData = decodedData[:-1]
+        # Converts the hidden data back to text from a Base64 format
+        decodedData = base64.b64decode(eval(decodedData))
+        decodedData = decodedData.decode('utf-8')
+    else:
+        # Get the file extension and removes it
+        fileExt = decodedData[-10:]
+        decodedData = decodedData[:-10]
+        # Remove padding from file extention
+        fileExt = fileExt.replace("@", "")
+    
+        # Converts the hidden data back to a file from a Base64 format
+        decodedData = base64.b64decode(eval(decodedData))
+        print(decodedData)
+
+        # path for output
+        path=os.path.join(os.path.join(os.path.expanduser('~')), 'Desktop'), # set path to open desktop
+        name = 'decoded_payload'
+        path = ''.join(path)
+        output_path = join(path, name)
+        output_path = output_path+fileExt
+
+        # Write the decoded data back to a file and saves it
+        with open(output_path, "wb") as outFile:
+            outFile.write(decodedData)
+        decodedData = output_path
+    print("Decoding Successful\n")
+    # Closes the embedded audio
+    embedded_audio.close()
+    return decodedData
+
 # payload = "payload.txt"
 # audio_file = "song_embedded.mp3"
-# LSB_bit = int(input("Choose how many LSB bitch"))
-# encoding(payload,audio_file,LSB_bit)
-# decoding(LSB_bit)
+# LSB_bit = int(input("Enter number of LSB to use bitch: "))
+# encoding(payload,audio_file,LSB_bit,True)
+# print(decoding(LSB_bit))

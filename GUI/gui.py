@@ -126,10 +126,10 @@ def vp_start_gui():
             # Payload is anything. cover is audio
             if(cover_path.endswith(".wav") or cover_path.endswith(".mp3")):
                 if(payload_path == ""): #using input typed in from user
-                    output_path = encoding_audio(inputValue_payload,cover_path,selectedLSB)
+                    output_path = encoding_audio(inputValue_payload,cover_path,selectedLSB,False)
                     previewSound(output_path, 3)
                 else:
-                    output_path = encoding_audio(payload_path,cover_path,selectedLSB)
+                    output_path = encoding_audio(payload_path,cover_path,selectedLSB,True)
                     previewSound(output_path, 3)
                 tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as audio_encoded.wav") # Success message pop up
             if(cover_path.endswith(".mp4") or cover_path.endswith(".wmv") or cover_path.endswith(".mov") or cover_path.endswith(".avi")):#If cover is video (MUST INSTALL ffmpeg @ https://windowsloop.com/install-ffmpeg-windows-10/)
@@ -181,6 +181,8 @@ def vp_start_gui():
                 tbox_output.insert("end", secret_text)
                 if(secret_text.endswith(".png") or secret_text.endswith(".jpg") or secret_text.endswith(".bmp")): #if secret is an image
                     previewImage(secret_text,3)
+                elif(secret_text.endswith(".txt") or secret_text.endswith(".docx")):
+                    previewText(secret_text,3)
             if(stego_path.endswith(".mp4") or stego_path.endswith(".wmv") or stego_path.endswith(".mov") or stego_path.endswith(".avi")):#if stego is video
                 de = Decode(stego_path, selectedLSB+1)#Create a decode object (according to JW's algo)
                 decodedData, output_ext = de.showData()#Do the decode and return a file ext of the payload

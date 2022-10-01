@@ -132,18 +132,22 @@ def vp_start_gui():
                     output_path = encoding_audio(payload_path,cover_path,selectedLSB)
                     previewSound(output_path, 3)
                 tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as audio_encoded.wav") # Success message pop up
-            if(cover_path.endswith(".mp4") or cover_path.endswith(".mkv") or cover_path.endswith(".mov") or cover_path.endswith(".avi")):#If cover is video (MUST INSTALL ffmpeg @ https://windowsloop.com/install-ffmpeg-windows-10/)
-                if(payload_path == ""):
+            if(cover_path.endswith(".mp4") or cover_path.endswith(".wmv") or cover_path.endswith(".mov") or cover_path.endswith(".avi")):#If cover is video (MUST INSTALL ffmpeg @ https://windowsloop.com/install-ffmpeg-windows-10/)
+                if(payload_path == ""):#if input is from text box
                     en = Encode(cover_path, inputValue_payload, selectedLSB+1, False)
                     output_ext = en.hideData()
-                    video_encoded_path = "video_encoded"+output_ext
-                    previewVideo(video_encoded_path, 3)
+                    output_path = "video_encoded"+output_ext
+                    previewVideo(output_path, 3)
+                    print(output_path)
                     tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as video_encoded.mp4") # Success message pop up
                 else:
-                    try:
+                    try:#if input is a file path
                         en = Encode(cover_path, payload_path, selectedLSB+1, True)
-                        en.hideData()
-                        previewVideo("video_encoded.mp4", 3)
+                        output_ext = en.hideData()
+                        print(output_ext)
+                        output_path = "video_encoded"+output_ext
+                        print(output_path)
+                        previewVideo(output_path, 3)
                         tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as video_encoded.mp4") # Success message pop up
                     except ValueError:
                         tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Payload larger than cover object.") # Error
@@ -158,7 +162,7 @@ def vp_start_gui():
     def decode_process():
         global stego_path
         global selectedLSB
-        global path_output
+        global output_path
         changeStateButton()
         if(stego_flag == 1):
             if(stego_path.endswith(".txt")):
@@ -177,22 +181,22 @@ def vp_start_gui():
                 tbox_output.insert("end", secret_text)
                 if(secret_text.endswith(".png") or secret_text.endswith(".jpg") or secret_text.endswith(".bmp")): #if secret is an image
                     previewImage(secret_text,3)
-            if(stego_path.endswith(".mp4") or stego_path.endswith(".mkv") or stego_path.endswith(".mov") or stego_path.endswith(".avi")):#if stego is video
+            if(stego_path.endswith(".mp4") or stego_path.endswith(".wmv") or stego_path.endswith(".mov") or stego_path.endswith(".avi")):#if stego is video
                 de = Decode(stego_path, selectedLSB+1)#Create a decode object (according to JW's algo)
                 decodedData, output_ext = de.showData()#Do the decode and return a file ext of the payload
                 if (decodedData == ""):
-                    path_output = 'video_decoded'+ output_ext#set global path_output = video_decoded.*ext*
+                    output_path = 'video_decoded'+ output_ext#set global output_path = video_decoded.*ext*
                     if(output_ext == ".txt" or output_ext == ".docx" or output_ext == ".xlsx"):
-                        previewText(path_output, 3)
+                        previewText(output_path, 3)
                     elif(output_ext == ".png" or output_ext == ".jpg" or output_ext == ".bmp"):
-                        previewImage(path_output, 3)
+                        previewImage(output_path, 3)
                     elif(output_ext == ".mp4" or output_ext == ".mov"):
-                        previewVideo(path_output, 3)
+                        previewVideo(output_path, 3)
                     elif(output_ext == ".mp3" or output_ext == ".wav"):
-                        previewSound(path_output, 3)
+                        previewSound(output_path, 3)
                 else:
-                    path_output = 'video_decoded.txt'
-                    previewText(path_output, 3)
+                    output_path = 'video_decoded.txt'
+                    previewText(output_path, 3)
             tk.messagebox.showinfo(title="Success!", message="Decoding successful!") # Success message pop up
              
         else:
@@ -443,11 +447,15 @@ def vp_start_gui():
         if(output_path.endswith(".mp3") or output_path.endswith(".wav") and audio_paused_output == False):
             audio = pygame.mixer.Sound(output_path)
             output_audio.play(audio, loops=0)
+            print(output_path)
         elif(output_path.endswith(".mp3") or output_path.endswith(".wav") and audio_paused_output == True):
             output_audio.unpause()
             audio_paused_output = False
+            print('1')
         else:
             print("Playing video")
+            print(output_path)
+            print(audio_paused_output)
             videoplayer_output.play()
     
     # Pause video and audio for output
@@ -483,7 +491,7 @@ def vp_start_gui():
                 #Call function to preview text & change cover flag to 1
                 previewText(cover_path, 0)
                 cover_object_flag = 1
-            elif(cover_path.endswith(".mp4") ):
+            elif(cover_path.endswith(".mp4") or cover_path.endswith(".mov") or cover_path.endswith(".wmv") or cover_path.endswith(".avi")):
                 previewVideo(cover_path, 0)
                 cover_object_flag = 1
             elif(cover_path.endswith(".mp3") or cover_path.endswith(".wav")):
@@ -515,7 +523,7 @@ def vp_start_gui():
                 #Call function to preview text & change cover flag to 1
                 previewText(payload_path, 1)
                 payload_flag = 1
-            elif(payload_path.endswith(".mp4")):
+            elif(payload_path.endswith(".mp4") or payload_path.endswith(".mov") or payload_path.endswith(".wmv") or payload_path.endswith(".avi")):
                 previewVideo(payload_path, 1)
                 payload_flag = 1
             elif(payload_path.endswith(".mp3") or payload_path.endswith(".wav")):
@@ -547,7 +555,7 @@ def vp_start_gui():
                 #Call function to preview text & change cover flag to 1
                 previewText(stego_path, 2)
                 stego_flag = 1
-            elif(stego_path.endswith(".mp4")):
+            elif(stego_path.endswith(".mp4") or stego_path.endswith(".mov") or stego_path.endswith(".wmv") or stego_path.endswith(".avi")):
                 previewVideo(stego_path, 2)
                 stego_flag = 1
             elif(stego_path.endswith(".mp3") or stego_path.endswith(".wav")):
@@ -803,7 +811,7 @@ def vp_start_gui():
         elif(cover_path.endswith(".txt") or cover_path.endswith(".docx") or cover_path.endswith(".xls")):
             previewText(cover_path, 0)
             cover_object_flag = 1
-        elif(cover_path.endswith(".mp4")):
+        elif(cover_path.endswith(".mp4") or cover_path.endswith(".mov") or cover_path.endswith(".wmv") or cover_path.endswith(".avi")):
             previewVideo(cover_path, 0)
             cover_object_flag = 1
         elif(cover_path.endswith(".mp3") or cover_path.endswith(".wav")):
@@ -867,7 +875,7 @@ def vp_start_gui():
         elif(stego_path.endswith(".txt") or stego_path.endswith(".docx") or stego_path.endswith(".xls")):
             previewText(stego_path, 2)
             stego_flag = 1
-        elif(stego_path.endswith(".mp4")):
+        elif(stego_path.endswith(".mp4") or stego_path.endswith(".mov") or stego_path.endswith(".wmv") or stego_path.endswith(".avi")):
             previewVideo(stego_path, 2)
             stego_flag = 1
         elif(stego_path.endswith(".mp3") or stego_path.endswith(".wav")):
@@ -930,7 +938,7 @@ def vp_start_gui():
         elif(payload_path.endswith(".txt") or payload_path.endswith(".docx") or payload_path.endswith(".xls")):
             previewText(payload_path, 1)
             payload_flag = 1
-        elif(payload_path.endswith(".mp4")):
+        elif(payload_path.endswith(".mp4") or payload_path.endswith(".mov") or payload_path.endswith(".wmv") or payload_path.endswith(".avi")):
             previewVideo(payload_path, 1)
             payload_flag = 1
         elif(payload_path.endswith(".mp3") or payload_path.endswith(".wav")):

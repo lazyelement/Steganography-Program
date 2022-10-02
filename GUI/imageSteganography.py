@@ -14,7 +14,11 @@ def msg_to_bin(msg):
     else:
         raise TypeError("Input type not supported")
 
-def encode_image(coverFile, payloadFile, lsb):   
+def encode_img(coverFile, payloadFile, lsb):   
+
+    if lsb<1 or lsb>8:
+        print("Incorrect input please try from 1-8")
+        return False
     #Reads in the cover image data  
     cover_img = cv2.imread(coverFile)
 
@@ -88,7 +92,7 @@ def encode_image(coverFile, payloadFile, lsb):
     
     # Format the name of the file to save the encoded image as
     coverName = os.path.splitext(coverFile)[0]
-    coverName = "encoded_"+coverName
+    coverName = coverName+"_encoded"
     saveAs = coverName+".png"
 
     # Write out the encoded image 
@@ -97,7 +101,10 @@ def encode_image(coverFile, payloadFile, lsb):
     return saveAs
 
 
-def decode_image(imgFile, lsb):
+def decode_img(imgFile, lsb):
+    if lsb<1 or lsb>8:
+        print("Incorrect input please try from 1-8")
+        return False
     # Read in the stego image data
     img = cv2.imread(imgFile)
 
@@ -157,6 +164,6 @@ def decode_image(imgFile, lsb):
     return saveAs
 
 
-#encode("sample.png","payload.jpg",3)
+# encode("sample.png","payload",1)
 
-#decode("encoded_sample.png",3)
+#decode("encoded_sample.png",1)

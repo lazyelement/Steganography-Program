@@ -19,7 +19,7 @@ def dataToBin(data):
 
 
 # Function to hide payload inside cover
-def encode(cover, payload, lsb):
+def encodeText(cover, payload, lsb):
     # Add delimeter to secret data
     payload += "%$&@"
 
@@ -90,7 +90,7 @@ def encode(cover, payload, lsb):
 
 
 # Function to decode the stego and find the payload
-def decode (encodedText, lsb):
+def decodeText(encodedText, lsb):
     print("encoded text: (len:", len(encodedText), ")" ,encodedText, "\n")
     print("[*] Decoding data... \n")
     

@@ -30,6 +30,8 @@ from text2textSteg import *
 from LSBaudio_modify import *
 from EncodeToVideo import *
 from DecodeFromVideo import *
+from decodeTxtStego import *
+from encode2TxtStego import *
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path("./assets") 
@@ -45,10 +47,11 @@ audio_paused_cover = False
 audio_paused_payload = False
 audio_paused_stego = False
 audio_paused_output = False
-textbox_choice = "Cover Object"
+textbox_choice = "Payload"
 inputValue_payload = ""
 inputValue_cover = ""
 selectedLSB = 0
+inputValue_payload_path = ""
 
 
 #init audio player
@@ -74,6 +77,7 @@ def vp_start_gui():
         global inputValue_cover
         global inputValue_payload
         global selectedLSB
+        global inputValue_payload_path
         changeStateButton()
         if(payload_flag == 1 and cover_object_flag == 1):
             #create output box
@@ -81,50 +85,60 @@ def vp_start_gui():
             tbox_output.place(x=70,y=359,width=(471-70),height=(712-359))
             # txt as cover & payload
             if(cover_path.endswith(".txt") and payload_path.endswith(".txt")):
-                with open(cover_path, encoding="utf8", errors='ignore') as file:
-                    for line in file:
-                            cover = line.strip()
-                with open(payload_path, encoding="utf8", errors='ignore') as file:
-                    for line in file:
-                            payload = line.strip()
+                # with open(cover_path, encoding="utf8", errors='ignore') as file:
+                #     for line in file:
+                #             cover = line.strip()
+                # with open(payload_path, encoding="utf8", errors='ignore') as file:
+                #     for line in file:
+                #             payload = line.strip()
                 # do encoding show encoded text in output box
-                encodedText = encode(cover,payload,selectedLSB)
-                tbox_output.insert("end", encodedText)
+                # encodedText = encodeText(cover,payload,selectedLSB+1)
+                # tbox_output.insert("end", encodedText)
                 # save output into textfile
-                saveTxtToFile(encodedText,"encodedText")
+                # saveTxtToFile(encodedText,"encodedText")
+                encodedText = encode_text2(cover_path,payload_path,selectedLSB+1)
+                previewText(encodedText,3)
                 tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encodedText.txt") # Success message pop up
             # payload is txt cover is input
-            if(cover_path == "" and payload_path.endswith(".txt")):
+            elif(cover_path == "" and payload_path.endswith(".txt")):
                 with open(payload_path, encoding="utf8", errors='ignore') as file:
                     for line in file:
                             payload = line.strip()
                 # do encoding show encoded text in output box
-                encodedText = encode(inputValue_cover,payload,selectedLSB)
+                encodedText = encodeText(inputValue_cover,payload,selectedLSB+1)
                 tbox_output.insert("end", encodedText)
                 # save output into textfile
                 saveTxtToFile(encodedText,"encodedText")
                 tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encodedText.txt") # Success message pop up
              # cover is txt payload is input
-            if(payload_path == "" and cover_path.endswith(".txt")):
+            elif(payload_path == "" and cover_path.endswith(".txt")):
                 with open(cover_path, encoding="utf8", errors='ignore') as file:
                     for line in file:
                             cover = line.strip()
                 # do encoding show encoded text in output box
-                encodedText = encode(cover,inputValue_payload,selectedLSB)
-                tbox_output.insert("end", encodedText)
+                encodedText = encode_text2(cover_path,inputValue_payload_path,selectedLSB+1)
+                previewText(encodedText,3)
                 # save output into textfile
-                saveTxtToFile(encodedText,"encodedText")
-                tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encodedText.txt") # Success message pop up
+                # saveTxtToFile(encodedText,"encodedText")
+                tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encoded_output.txt") # Success message pop up
             # payload and cover both user input    
-            if(cover_path == "" and payload_path == ""):
+            elif(cover_path == "" and payload_path == ""):
                 # do encoding show encoded text in output box
-                encodedText = encode(inputValue_cover,inputValue_payload,selectedLSB)
+                encodedText = encodeText(inputValue_cover,inputValue_payload_path,selectedLSB+1)
                 tbox_output.insert("end", encodedText)
                  # save output into textfile
                 saveTxtToFile(encodedText,"encodedText")
-                tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encodedText.txt in") # Success message pop up
+                tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encodedText.txt") # Success message pop up
+            # payload anything but cover is .txt
+            elif(cover_path.endswith(".txt")):
+                encode_text = encode_text2(cover_path, payload_path, selectedLSB+1)
+                if(encode_text.endswith(".png") or encode_text.endswith(".jpg") or encode_text.endswith(".bmp")):
+                    previewImage(encode_text,3)
+                else:
+                    previewText(encode_text,3)
+                tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encoded_output") # Success message pop up
             # Payload is anything. cover is audio
-            if(cover_path.endswith(".wav") or cover_path.endswith(".mp3")):
+            elif(cover_path.endswith(".wav") or cover_path.endswith(".mp3")):
                 if(payload_path == ""): #using input typed in from user
                     output_path = encoding_audio(inputValue_payload,cover_path,selectedLSB,False)
                     previewSound(output_path, 3)
@@ -132,7 +146,7 @@ def vp_start_gui():
                     output_path = encoding_audio(payload_path,cover_path,selectedLSB,True)
                     previewSound(output_path, 3)
                 tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as audio_encoded.wav") # Success message pop up
-            if(cover_path.endswith(".mp4") or cover_path.endswith(".wmv") or cover_path.endswith(".mov") or cover_path.endswith(".avi")):#If cover is video (MUST INSTALL ffmpeg @ https://windowsloop.com/install-ffmpeg-windows-10/)
+            elif(cover_path.endswith(".mp4") or cover_path.endswith(".wmv") or cover_path.endswith(".mov") or cover_path.endswith(".avi")):#If cover is video (MUST INSTALL ffmpeg @ https://windowsloop.com/install-ffmpeg-windows-10/)
                 if(payload_path == ""):#if input is from text box
                     en = Encode(cover_path, inputValue_payload, selectedLSB+1, False)
                     output_ext = en.hideData()
@@ -169,11 +183,15 @@ def vp_start_gui():
                 with open(stego_path, encoding="utf8", errors='ignore') as file:
                     for line in file:
                             stego = line.strip()
-                secret_text = decode(stego,selectedLSB)
-                #output is in text form but not in a txt file
-                tbox_output = tk.Text(window, background="#ffffff")
-                tbox_output.place(x=70,y=359,width=(471-70),height=(712-359))
-                tbox_output.insert("end", secret_text)
+                secret_text = decode_text2(stego_path,selectedLSB+1)
+                # #output is in text form but not in a txt file
+                # tbox_output = tk.Text(window, background="#ffffff")
+                # tbox_output.place(x=70,y=359,width=(471-70),height=(712-359))
+                # tbox_output.insert("end", secret_text)
+                if(secret_text.endswith(".png") or secret_text.endswith(".jpg") or secret_text.endswith(".bmp")):
+                    previewImage(secret_text,3)
+                elif (secret_text.endswith(".docx") or secret_text.endswith(".txt")):
+                    previewText(secret_text,3)
             if(stego_path.endswith(".wav")):
                 secret_text = decoding_audio(stego_path,selectedLSB)
                 tbox_output = tk.Text(window, background="#ffffff")
@@ -585,6 +603,7 @@ def vp_start_gui():
         global cover_path
         global inputValue_payload
         global inputValue_cover
+        global inputValue_payload_path
         inputValue=entry_2.get()
         if(textbox_choice == "Cover Object"):
             tbox_coverobj = tk.Text(window, background="#ffffff")
@@ -601,7 +620,16 @@ def vp_start_gui():
             payload_flag = 1
             # path set to none incase user added something and changed to adding own input isntead
             payload_path = ""
-            inputValue_payload = inputValue
+            # path for input
+            path=os.path.join(os.path.join(os.path.expanduser('~')), 'Desktop'), # set path to open desktop
+            name = 'user_input_payload.txt'
+            path = ''.join(path)
+            output_path = join(path, name)
+            inputValue_payload_path = output_path
+            # Saves ouput into a file
+            with open(output_path, "wb") as outFile:
+                    outFile.write(inputValue.encode('utf-8'))
+            
 
     # window = Tk()
     window = tkinterdnd2.Tk()
@@ -667,7 +695,7 @@ def vp_start_gui():
     533.0,
     428.0,
     anchor="nw",
-    text="Enter text for payload / cover object",
+    text="Enter text for payload",
     fill="#000066",
     font=("Inter Regular", 14 * -1)
     )
@@ -731,15 +759,15 @@ def vp_start_gui():
         y=387.0
     )
 
-    # Create Dropdown for textbox
-    OPTIONS = ["Payload","Cover Object"]
-    variable = StringVar(window)
-    variable.set(OPTIONS[1]) # default value
-    lsb_dropdown = OptionMenu(window, variable, *OPTIONS,command=show_selected_option_textbox)
-    lsb_dropdown.place(
-        x=760.0,
-        y=480.0
-    )
+    # # Create Dropdown for textbox
+    # OPTIONS = ["Payload","Cover Object"]
+    # variable = StringVar(window)
+    # variable.set(OPTIONS[1]) # default value
+    # lsb_dropdown = OptionMenu(window, variable, *OPTIONS,command=show_selected_option_textbox)
+    # lsb_dropdown.place(
+    #     x=760.0,
+    #     y=480.0
+    # )
 
     # Decode button
     button_image_2 = PhotoImage(
@@ -1166,8 +1194,9 @@ if __name__ == '__main__':
         audio_paused_payload = False
         audio_paused_stego = False
         audio_paused_output = False
-        textbox_choice = "Cover Object"
+        textbox_choice = "Payload"
         selectedLSB = 0
+        inputValue_payload_path = ""
 
         # destroy window
         window.destroy()

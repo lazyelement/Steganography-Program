@@ -34,6 +34,7 @@ from DecodeFromVideo import *
 from decodeTxtStego import *
 from encode2TxtStego import *
 from docxSteg import *
+from imageSteganography import *
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path("./assets") 
@@ -178,20 +179,34 @@ def vp_start_gui():
                         print(secret_text)
                         previewText(secret_text,3)
                         tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encoded_file.docx") # Success message pop up
+                elif(cover_path.endswith(".png") or cover_path.endswith(".jpg")):
+                    if(payload_path == ""):
+                        with open('tmp.txt', 'w') as f:
+                            f.write(inputValue_payload)
+                        output_path = encode_img(cover_path, 'tmp.txt', selectedLSB+1)
+                        if os.path.exists("tmp.txt"):
+                            os.remove("tmp.txt")
+                        previewImage(output_path, 3)
+                        tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved in same file location, named (originalname)_encoded.png") # Success message pop up
+                    else:
+                        try:#if input is a file path
+                            output_path = encode_img(cover_path, payload_path, selectedLSB+1)
+                            previewImage(output_path, 3)
+                            tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved in same file location, named (originalname)_encoded.png") # Success message pop up
+                        except ValueError:
+                            tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Payload larger than cover object.") # Error
             elif(payload_flag == 1 and cover_object_flag == 0):
-                tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Cover object missing.") # Error message pop up
+                        tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Cover object missing.") # Error message pop up
             elif(payload_flag == 0 and cover_object_flag == 1):
                 tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Payload missing.") # Error message pop up
             else:
                 tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Payload and cover object missing.") # Error message pop up
-            changeStateButton()
         except ValueError:
             tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Payload larger than cover object.") # Error
-            changeStateButton()
         except:
             error_message = "Encoding unsuccessful." + str(exception)
             tk.messagebox.showerror(title="Failed to encode", message=error_message) # Error message pop up
-            changeStateButton()
+        changeStateButton()
 
     def decode_process():
         try:

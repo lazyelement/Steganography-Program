@@ -33,6 +33,7 @@ from EncodeToVideo import *
 from DecodeFromVideo import *
 from decodeTxtStego import *
 from encode2TxtStego import *
+from docxSteg import *
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path("./assets") 
@@ -167,6 +168,16 @@ def vp_start_gui():
                             tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as video_encoded.mp4") # Success message pop up
                         except ValueError:
                             tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Payload larger than cover object.") # Error
+                elif(cover_path.endswith(".docx")):
+                    if(payload_path == ""):#if input is from text box
+                        output_path = encode_docx(cover_path,inputValue_payload_path,selectedLSB+1)
+                        previewText(output_path,3)
+                        tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encoded_file.docx") # Success message pop up
+                    else:
+                        secret_text = encode_docx(cover_path,payload_path,selectedLSB+1)
+                        print(secret_text)
+                        previewText(secret_text,3)
+                        tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encoded_file.docx") # Success message pop up
             elif(payload_flag == 1 and cover_object_flag == 0):
                 tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Cover object missing.") # Error message pop up
             elif(payload_flag == 0 and cover_object_flag == 1):
@@ -174,9 +185,13 @@ def vp_start_gui():
             else:
                 tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Payload and cover object missing.") # Error message pop up
             changeStateButton()
+        except ValueError:
+            tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Payload larger than cover object.") # Error
+            changeStateButton()
         except:
             error_message = "Encoding unsuccessful." + str(exception)
             tk.messagebox.showerror(title="Failed to encode", message=error_message) # Error message pop up
+            changeStateButton()
 
     def decode_process():
         try:
@@ -198,7 +213,7 @@ def vp_start_gui():
                         previewImage(secret_text,3)
                     elif (secret_text.endswith(".docx") or secret_text.endswith(".txt")):
                         previewText(secret_text,3)
-                if(stego_path.endswith(".wav")):
+                elif(stego_path.endswith(".wav")):
                     secret_text = decoding_audio(stego_path,selectedLSB+1)
                     tbox_output = tk.Text(window, background="#ffffff")
                     tbox_output.place(x=70,y=359,width=(471-70),height=(712-359))
@@ -207,7 +222,7 @@ def vp_start_gui():
                         previewImage(secret_text,3)
                     elif(secret_text.endswith(".txt") or secret_text.endswith(".docx")):
                         previewText(secret_text,3)
-                if(stego_path.endswith(".mp4") or stego_path.endswith(".wmv") or stego_path.endswith(".mov") or stego_path.endswith(".avi")):#if stego is video
+                elif(stego_path.endswith(".mp4") or stego_path.endswith(".wmv") or stego_path.endswith(".mov") or stego_path.endswith(".avi")):#if stego is video
                     de = Decode(stego_path, selectedLSB+1)#Create a decode object (according to JW's algo)
                     decodedData, output_ext = de.showData()#Do the decode and return a file ext of the payload
                     if (decodedData == ""):
@@ -223,7 +238,13 @@ def vp_start_gui():
                     else:
                         output_path = 'video_decoded.txt'
                         previewText(output_path, 3)
-                tk.messagebox.showinfo(title="Success!", message="Decoding successful!") # Success message pop up
+                elif(stego_path.endswith(".docx")):
+                    secret_text = decode_docx(stego_path,selectedLSB+1)
+                    if(secret_text.endswith(".png") or secret_text.endswith(".jpg") or secret_text.endswith(".bmp")): #if secret is an image
+                        previewImage(secret_text,3)
+                    elif(secret_text.endswith(".txt") or secret_text.endswith(".docx")):
+                        previewText(secret_text,3)
+                tk.messagebox.showinfo(title="Success!", message="Decoding successful!") # Success message pop up           
             else:
                 tk.messagebox.showerror(title="Failed to decode", message="Decoding unsuccessful. Stego object missing.") # Error message pop up
         except:

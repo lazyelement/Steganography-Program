@@ -5,6 +5,7 @@
 
 from asyncio.windows_events import ERROR_CONNECTION_ABORTED
 from distutils.util import convert_path
+from logging import exception
 from pathlib import Path
 from pickle import GLOBAL
 from re import I
@@ -71,156 +72,162 @@ def vp_start_gui():
 
     # encode process
     def encode_process():
-        global cover_path
-        global payload_path
-        global output_path
-        global inputValue_cover
-        global inputValue_payload
-        global selectedLSB
-        global inputValue_payload_path
-        changeStateButton()
-        if(payload_flag == 1 and cover_object_flag == 1):
-            #create output box
-            tbox_output = tk.Text(window, background="#ffffff")
-            tbox_output.place(x=70,y=359,width=(471-70),height=(712-359))
-            # txt as cover & payload
-            if(cover_path.endswith(".txt") and payload_path.endswith(".txt")):
-                # with open(cover_path, encoding="utf8", errors='ignore') as file:
-                #     for line in file:
-                #             cover = line.strip()
-                # with open(payload_path, encoding="utf8", errors='ignore') as file:
-                #     for line in file:
-                #             payload = line.strip()
-                # do encoding show encoded text in output box
-                # encodedText = encodeText(cover,payload,selectedLSB+1)
-                # tbox_output.insert("end", encodedText)
-                # save output into textfile
-                # saveTxtToFile(encodedText,"encodedText")
-                encodedText = encode_text2(cover_path,payload_path,selectedLSB+1)
-                previewText(encodedText,3)
-                tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encodedText.txt") # Success message pop up
-            # payload is txt cover is input
-            elif(cover_path == "" and payload_path.endswith(".txt")):
-                with open(payload_path, encoding="utf8", errors='ignore') as file:
-                    for line in file:
-                            payload = line.strip()
-                # do encoding show encoded text in output box
-                encodedText = encodeText(inputValue_cover,payload,selectedLSB+1)
-                tbox_output.insert("end", encodedText)
-                # save output into textfile
-                saveTxtToFile(encodedText,"encodedText")
-                tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encodedText.txt") # Success message pop up
-             # cover is txt payload is input
-            elif(payload_path == "" and cover_path.endswith(".txt")):
-                with open(cover_path, encoding="utf8", errors='ignore') as file:
-                    for line in file:
-                            cover = line.strip()
-                # do encoding show encoded text in output box
-                encodedText = encode_text2(cover_path,inputValue_payload_path,selectedLSB+1)
-                previewText(encodedText,3)
-                # save output into textfile
-                # saveTxtToFile(encodedText,"encodedText")
-                tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encoded_output.txt") # Success message pop up
-            # payload and cover both user input    
-            elif(cover_path == "" and payload_path == ""):
-                # do encoding show encoded text in output box
-                encodedText = encodeText(inputValue_cover,inputValue_payload_path,selectedLSB+1)
-                tbox_output.insert("end", encodedText)
-                 # save output into textfile
-                saveTxtToFile(encodedText,"encodedText")
-                tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encodedText.txt") # Success message pop up
-            # payload anything but cover is .txt
-            elif(cover_path.endswith(".txt")):
-                encode_text = encode_text2(cover_path, payload_path, selectedLSB+1)
-                if(encode_text.endswith(".png") or encode_text.endswith(".jpg") or encode_text.endswith(".bmp")):
-                    previewImage(encode_text,3)
-                else:
-                    previewText(encode_text,3)
-                tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encoded_output") # Success message pop up
-            # Payload is anything. cover is audio
-            elif(cover_path.endswith(".wav") or cover_path.endswith(".mp3")):
-                if(payload_path == ""): #using input typed in from user
-                    output_path = encoding_audio(inputValue_payload,cover_path,selectedLSB,False)
-                    previewSound(output_path, 3)
-                else:
-                    output_path = encoding_audio(payload_path,cover_path,selectedLSB,True)
-                    previewSound(output_path, 3)
-                tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as audio_encoded.wav") # Success message pop up
-            elif(cover_path.endswith(".mp4") or cover_path.endswith(".wmv") or cover_path.endswith(".mov") or cover_path.endswith(".avi")):#If cover is video (MUST INSTALL ffmpeg @ https://windowsloop.com/install-ffmpeg-windows-10/)
-                if(payload_path == ""):#if input is from text box
-                    en = Encode(cover_path, inputValue_payload, selectedLSB+1, False)
-                    output_ext = en.hideData()
-                    output_path = "video_encoded"+output_ext
-                    previewVideo(output_path, 3)
-                    print(output_path)
-                    tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as video_encoded.mp4") # Success message pop up
-                else:
-                    try:#if input is a file path
-                        en = Encode(cover_path, payload_path, selectedLSB+1, True)
-                        output_ext = en.hideData()
-                        print(output_ext)
-                        output_path = "video_encoded"+output_ext
-                        print(output_path)
-                        previewVideo(output_path, 3)
-                        tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as video_encoded.mp4") # Success message pop up
-                    except ValueError:
-                        tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Payload larger than cover object.") # Error
-        elif(payload_flag == 1 and cover_object_flag == 0):
-            tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Cover object missing.") # Error message pop up
-        elif(payload_flag == 0 and cover_object_flag == 1):
-            tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Payload missing.") # Error message pop up
-        else:
-            tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Payload and cover object missing.") # Error message pop up
-        changeStateButton()
-
-    def decode_process():
-        global stego_path
-        global selectedLSB
-        global output_path
-        changeStateButton()
-        if(stego_flag == 1):
-            if(stego_path.endswith(".txt")):
-                with open(stego_path, encoding="utf8", errors='ignore') as file:
-                    for line in file:
-                            stego = line.strip()
-                secret_text = decode_text2(stego_path,selectedLSB+1)
-                # #output is in text form but not in a txt file
-                # tbox_output = tk.Text(window, background="#ffffff")
-                # tbox_output.place(x=70,y=359,width=(471-70),height=(712-359))
-                # tbox_output.insert("end", secret_text)
-                if(secret_text.endswith(".png") or secret_text.endswith(".jpg") or secret_text.endswith(".bmp")):
-                    previewImage(secret_text,3)
-                elif (secret_text.endswith(".docx") or secret_text.endswith(".txt")):
-                    previewText(secret_text,3)
-            if(stego_path.endswith(".wav")):
-                secret_text = decoding_audio(stego_path,selectedLSB)
+        try:
+            global cover_path
+            global payload_path
+            global output_path
+            global inputValue_cover
+            global inputValue_payload
+            global selectedLSB
+            global inputValue_payload_path
+            changeStateButton()
+            if(payload_flag == 1 and cover_object_flag == 1):
+                #create output box
                 tbox_output = tk.Text(window, background="#ffffff")
                 tbox_output.place(x=70,y=359,width=(471-70),height=(712-359))
-                tbox_output.insert("end", secret_text)
-                if(secret_text.endswith(".png") or secret_text.endswith(".jpg") or secret_text.endswith(".bmp")): #if secret is an image
-                    previewImage(secret_text,3)
-                elif(secret_text.endswith(".txt") or secret_text.endswith(".docx")):
-                    previewText(secret_text,3)
-            if(stego_path.endswith(".mp4") or stego_path.endswith(".wmv") or stego_path.endswith(".mov") or stego_path.endswith(".avi")):#if stego is video
-                de = Decode(stego_path, selectedLSB+1)#Create a decode object (according to JW's algo)
-                decodedData, output_ext = de.showData()#Do the decode and return a file ext of the payload
-                if (decodedData == ""):
-                    output_path = 'video_decoded'+ output_ext#set global output_path = video_decoded.*ext*
-                    if(output_ext == ".txt" or output_ext == ".docx" or output_ext == ".xlsx"):
-                        previewText(output_path, 3)
-                    elif(output_ext == ".png" or output_ext == ".jpg" or output_ext == ".bmp"):
-                        previewImage(output_path, 3)
-                    elif(output_ext == ".mp4" or output_ext == ".mov"):
-                        previewVideo(output_path, 3)
-                    elif(output_ext == ".mp3" or output_ext == ".wav"):
+                # txt as cover & payload
+                if(cover_path.endswith(".txt") and payload_path.endswith(".txt")):
+                    # with open(cover_path, encoding="utf8", errors='ignore') as file:
+                    #     for line in file:
+                    #             cover = line.strip()
+                    # with open(payload_path, encoding="utf8", errors='ignore') as file:
+                    #     for line in file:
+                    #             payload = line.strip()
+                    # do encoding show encoded text in output box
+                    # encodedText = encodeText(cover,payload,selectedLSB+1)
+                    # tbox_output.insert("end", encodedText)
+                    # save output into textfile
+                    # saveTxtToFile(encodedText,"encodedText")
+                    encodedText = encode_text2(cover_path,payload_path,selectedLSB+1)
+                    previewText(encodedText,3)
+                    tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encodedText.txt") # Success message pop up
+                # payload is txt cover is input
+                elif(cover_path == "" and payload_path.endswith(".txt")):
+                    with open(payload_path, encoding="utf8", errors='ignore') as file:
+                        for line in file:
+                                payload = line.strip()
+                    # do encoding show encoded text in output box
+                    encodedText = encodeText(inputValue_cover,payload,selectedLSB+1)
+                    tbox_output.insert("end", encodedText)
+                    # save output into textfile
+                    saveTxtToFile(encodedText,"encodedText")
+                    tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encodedText.txt") # Success message pop up
+                # cover is txt payload is input
+                elif(payload_path == "" and cover_path.endswith(".txt")):
+                    with open(cover_path, encoding="utf8", errors='ignore') as file:
+                        for line in file:
+                                cover = line.strip()
+                    # do encoding show encoded text in output box
+                    encodedText = encode_text2(cover_path,inputValue_payload_path,selectedLSB+1)
+                    previewText(encodedText,3)
+                    # save output into textfile
+                    # saveTxtToFile(encodedText,"encodedText")
+                    tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encoded_output.txt") # Success message pop up
+                # payload and cover both user input    
+                elif(cover_path == "" and payload_path == ""):
+                    # do encoding show encoded text in output box
+                    encodedText = encodeText(inputValue_cover,inputValue_payload_path,selectedLSB+1)
+                    tbox_output.insert("end", encodedText)
+                    # save output into textfile
+                    saveTxtToFile(encodedText,"encodedText")
+                    tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encodedText.txt") # Success message pop up
+                # payload anything but cover is .txt
+                elif(cover_path.endswith(".txt")):
+                    encode_text = encode_text2(cover_path, payload_path, selectedLSB+1)
+                    if(encode_text.endswith(".png") or encode_text.endswith(".jpg") or encode_text.endswith(".bmp")):
+                        previewImage(encode_text,3)
+                    else:
+                        previewText(encode_text,3)
+                    tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encoded_output") # Success message pop up
+                # Payload is anything. cover is audio
+                elif(cover_path.endswith(".wav") or cover_path.endswith(".mp3")):
+                    if(payload_path == ""): #using input typed in from user
+                        output_path = encoding_audio(inputValue_payload_path,cover_path,selectedLSB+1,False)
                         previewSound(output_path, 3)
-                else:
-                    output_path = 'video_decoded.txt'
-                    previewText(output_path, 3)
-            tk.messagebox.showinfo(title="Success!", message="Decoding successful!") # Success message pop up
-             
-        else:
-            tk.messagebox.showerror(title="Failed to decode", message="Decoding unsuccessful. Stego object missing.") # Error message pop up
+                    else:
+                        output_path = encoding_audio(payload_path,cover_path,selectedLSB+1,True)
+                        previewSound(output_path, 3)
+                    tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as audio_encoded.wav") # Success message pop up
+                elif(cover_path.endswith(".mp4") or cover_path.endswith(".wmv") or cover_path.endswith(".mov") or cover_path.endswith(".avi")):#If cover is video (MUST INSTALL ffmpeg @ https://windowsloop.com/install-ffmpeg-windows-10/)
+                    if(payload_path == ""):#if input is from text box
+                        en = Encode(cover_path, inputValue_payload, selectedLSB+1, False)
+                        output_ext = en.hideData()
+                        output_path = "video_encoded"+output_ext
+                        previewVideo(output_path, 3)
+                        print(output_path)
+                        tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as video_encoded.mp4") # Success message pop up
+                    else:
+                        try:#if input is a file path
+                            en = Encode(cover_path, payload_path, selectedLSB+1, True)
+                            output_ext = en.hideData()
+                            print(output_ext)
+                            output_path = "video_encoded"+output_ext
+                            print(output_path)
+                            previewVideo(output_path, 3)
+                            tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as video_encoded.mp4") # Success message pop up
+                        except ValueError:
+                            tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Payload larger than cover object.") # Error
+            elif(payload_flag == 1 and cover_object_flag == 0):
+                tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Cover object missing.") # Error message pop up
+            elif(payload_flag == 0 and cover_object_flag == 1):
+                tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Payload missing.") # Error message pop up
+            else:
+                tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Payload and cover object missing.") # Error message pop up
+            changeStateButton()
+        except:
+            error_message = "Encoding unsuccessful." + str(exception)
+            tk.messagebox.showerror(title="Failed to encode", message=error_message) # Error message pop up
+
+    def decode_process():
+        try:
+            global stego_path
+            global selectedLSB
+            global output_path
+            changeStateButton()
+            if(stego_flag == 1):
+                if(stego_path.endswith(".txt")):
+                    with open(stego_path, encoding="utf8", errors='ignore') as file:
+                        for line in file:
+                                stego = line.strip()
+                    secret_text = decode_text2(stego_path,selectedLSB+1)
+                    # #output is in text form but not in a txt file
+                    # tbox_output = tk.Text(window, background="#ffffff")
+                    # tbox_output.place(x=70,y=359,width=(471-70),height=(712-359))
+                    # tbox_output.insert("end", secret_text)
+                    if(secret_text.endswith(".png") or secret_text.endswith(".jpg") or secret_text.endswith(".bmp")):
+                        previewImage(secret_text,3)
+                    elif (secret_text.endswith(".docx") or secret_text.endswith(".txt")):
+                        previewText(secret_text,3)
+                if(stego_path.endswith(".wav")):
+                    secret_text = decoding_audio(stego_path,selectedLSB+1)
+                    tbox_output = tk.Text(window, background="#ffffff")
+                    tbox_output.place(x=70,y=359,width=(471-70),height=(712-359))
+                    tbox_output.insert("end", secret_text)
+                    if(secret_text.endswith(".png") or secret_text.endswith(".jpg") or secret_text.endswith(".bmp")): #if secret is an image
+                        previewImage(secret_text,3)
+                    elif(secret_text.endswith(".txt") or secret_text.endswith(".docx")):
+                        previewText(secret_text,3)
+                if(stego_path.endswith(".mp4") or stego_path.endswith(".wmv") or stego_path.endswith(".mov") or stego_path.endswith(".avi")):#if stego is video
+                    de = Decode(stego_path, selectedLSB+1)#Create a decode object (according to JW's algo)
+                    decodedData, output_ext = de.showData()#Do the decode and return a file ext of the payload
+                    if (decodedData == ""):
+                        output_path = 'video_decoded'+ output_ext#set global output_path = video_decoded.*ext*
+                        if(output_ext == ".txt" or output_ext == ".docx" or output_ext == ".xlsx"):
+                            previewText(output_path, 3)
+                        elif(output_ext == ".png" or output_ext == ".jpg" or output_ext == ".bmp"):
+                            previewImage(output_path, 3)
+                        elif(output_ext == ".mp4" or output_ext == ".mov"):
+                            previewVideo(output_path, 3)
+                        elif(output_ext == ".mp3" or output_ext == ".wav"):
+                            previewSound(output_path, 3)
+                    else:
+                        output_path = 'video_decoded.txt'
+                        previewText(output_path, 3)
+                tk.messagebox.showinfo(title="Success!", message="Decoding successful!") # Success message pop up
+            else:
+                tk.messagebox.showerror(title="Failed to decode", message="Decoding unsuccessful. Stego object missing.") # Error message pop up
+        except:
+            tk.messagebox.showerror(title="Failed to decode", message="Decoding unsuccessful. Check LSB or Stego.") # Error message pop up
         changeStateButton()
 
     # change button to disabled when loading
@@ -1201,5 +1208,5 @@ if __name__ == '__main__':
         # destroy window
         window.destroy()
         vp_start_gui()
-
+    
     vp_start_gui()

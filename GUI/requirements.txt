@@ -1,0 +1,8 @@
+docx2txt==0.8
+numpy==1.23.3
+pandas==1.4.4
+Pillow==9.2.0
+pygame==2.1.2
+setuptools==63.2.0
+tkinterdnd2==0.3.0
+tkVideoPlayer==2.3

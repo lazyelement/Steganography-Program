@@ -93,11 +93,14 @@ class Decode:
             allBytes = [binaryData[i: i+8] for i in range(0, len(binaryData), 8)]
             
             # convert from bits to characters
+            tempList = ''
             for byte in allBytes:
-                decodedData += chr(int(byte, 2))
+                tempList += chr(int(byte, 2))
                 # Stop decoding after we have reached the delimeter which is "#####"
-                if decodedData[-5:] == "#####":
+                if tempList[-5:] == "#####":
                     break
+
+            decodedData += tempList
                 
         # Removes delimeter
         decodedData = decodedData[:-5]

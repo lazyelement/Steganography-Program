@@ -1,2 +1,6 @@
 # ACW1.0_Steganography
-LSB Replacement Steganography program
+Steganography using LSB
+
+What can it do?
+
+Prerequisite:

@@ -54,6 +54,9 @@ class Decode:
         numOfFrames = frameExtracted[0]
         imgChannels = frameExtracted[2]
 
+        # Find name of stego video
+        stegoName = os.path.splitext(self.stegoObjPath)[0]
+
         decodedData = ""
         # Loop through each frame of the stego video
         for frame in range(numOfFrames):
@@ -112,8 +115,7 @@ class Decode:
             decodedData = base64.b64decode(eval(decodedData))
             fileExt = ".txt"
             # Write the decoded data back to a .txt file and saves it
-            decodedImgName = "video_decoded"
-            with open(decodedImgName + ".txt", "wb") as outFile:
+            with open(stegoName + "_decoded" + ".txt", "wb") as outFile:
                 outFile.write(decodedData)
 
         else:
@@ -127,8 +129,7 @@ class Decode:
             decodedData = base64.b64decode(eval(decodedData))
 
             # Write the decoded data back to a file and saves it
-            decodedImgName = "video_decoded"
-            with open(decodedImgName + fileExt, "wb") as outFile:
+            with open(stegoName + "_decoded" + fileExt, "wb") as outFile:
                 outFile.write(decodedData)
             decodedData = ""
 

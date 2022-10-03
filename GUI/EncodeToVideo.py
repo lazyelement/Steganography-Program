@@ -58,6 +58,7 @@ class Encode:
     # Method to hide/encode the encrypted binary data into the cover object
     def hideData(self):
         # Find extension of cover video
+        coverName = os.path.splitext(self.coverVidPath)[0]
         coverExt = os.path.splitext(self.coverVidPath)[1]
 
         # Check if payload is a file
@@ -226,17 +227,16 @@ class Encode:
         call(["ffmpeg", "-i", "tmp/temp.avi", "-i", "tmp/audio.mp3", "-codec", "copy", "tmp/outputVid.avi", "-y"],stdout=open(os.devnull, "w"), stderr=STDOUT)
 
         # Change the temp video file into a format that can be played
-        stegoObjName = "video_encoded"
-        call(["ffmpeg", "-i", "tmp/outputVid.avi", "-f", "avi", "-c:v", "rawvideo", "-pix_fmt", "rgb32", stegoObjName+coverExt], stdout=open(os.devnull, "w"), stderr=STDOUT)
+        call(["ffmpeg", "-i", "tmp/outputVid.avi", "-f", "avi", "-c:v", "rawvideo", "-pix_fmt", "rgb32", coverName+"_encoded"+coverExt, "-y"], stdout=open(os.devnull, "w"), stderr=STDOUT)
 
         # Clears the temp folder
         if os.path.exists("./tmp"):
             shutil.rmtree("./tmp")
         return coverExt
 
-# coverFile = r"C:\Users\chewc\Videos\AVItest.avi"
-# payloadFile = r"C:\Users\chewc\OneDrive\Desktop\RANDOM.txt"
-# numOfBits = 1
+# coverFile = "C:\\Users\\junwe\\Desktop\\SIT\\Temp\\Code\\palamp4.mp4"
+# payloadFile = "C:\\Users\\junwe\\Desktop\\SIT\\Temp\\narniaScript.docx"
+# numOfBits = 2
 
-# en = Encode(coverFile, payloadFile, numOfBits, False)
+# en = Encode(coverFile, payloadFile, numOfBits, True)
 # print(en.hideData())

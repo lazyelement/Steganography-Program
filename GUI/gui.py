@@ -353,6 +353,10 @@ def vp_start_gui():
             if path.endswith(".docx"):
                 text = docx2txt.process(path)
                 tbox_payload.insert(1.0,text)
+            elif path.endswith(".xls"):
+                payload_listb = tk.Listbox(window, selectmode=tk.SINGLE)
+                payload_listb.place(x=70,y=56,width=(279-30),height=(624-400))
+                payload_listb.insert("end", path)
             else:    
                 with open(path, "r") as file:
                     for line in file:

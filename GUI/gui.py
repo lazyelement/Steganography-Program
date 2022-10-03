@@ -231,14 +231,14 @@ def vp_start_gui():
                     tbox_output.insert("end", secret_text)
                     if(secret_text.endswith(".png") or secret_text.endswith(".jpg") or secret_text.endswith(".bmp")): #if secret is an image
                         previewImage(secret_text,3)
-                    elif(secret_text.endswith(".txt") or secret_text.endswith(".docx")):
+                    elif(secret_text.endswith(".txt") or secret_text.endswith(".docx") or secret_text.endswith(".xls") or secret_text.endswith(".xlsx")):
                         previewText(secret_text,3)
                 elif(stego_path.endswith(".mp4") or stego_path.endswith(".wmv") or stego_path.endswith(".mov") or stego_path.endswith(".avi")):#if stego is video
                     de = Decode(stego_path, selectedLSB+1)#Create a decode object (according to JW's algo)
                     decodedData, output_ext = de.showData()#Do the decode and return a file ext of the payload
                     if (decodedData == ""):
                         output_path = 'video_decoded'+ output_ext#set global output_path = video_decoded.*ext*
-                        if(output_ext == ".txt" or output_ext == ".docx" or output_ext == ".xlsx"):
+                        if(output_ext == ".txt" or output_ext == ".docx" or output_ext == ".xlsx" or output_ext == ".xls"):
                             previewText(output_path, 3)
                         elif(output_ext == ".png" or output_ext == ".jpg" or output_ext == ".bmp"):
                             previewImage(output_path, 3)
@@ -258,7 +258,7 @@ def vp_start_gui():
                 elif(stego_path.endswith(".png") or stego_path.endswith(".jpg") or stego_path.endswith(".bmp")):
                     output_path = decode_img(stego_path, selectedLSB+1)
                     print(output_path)
-                    if(output_path.endswith(".txt") or output_path.endswith(".docx") or output_path.endswith(".xlsx")):
+                    if(output_path.endswith(".txt") or output_path.endswith(".docx") or output_path.endswith(".xls") or secret_text.endswith(".xlsx")):
                         previewText(output_path, 3)
                     elif(output_path.endswith(".png") or output_path.endswith(".jpg") or output_path.endswith(".bmp")):
                         previewImage(output_path, 3)
@@ -266,7 +266,7 @@ def vp_start_gui():
                         previewVideo(output_path, 3)
                     elif(output_path.endswith(".mp3") or output_path.endswith(".wav")):
                         previewSound(output_path, 3)
-                    tk.messagebox.showinfo(title="Success!", message="Decoding successful! Payload in same directory as stego object.") # Success message pop up
+                    tk.messagebox.showinfo(title="Success!", message="Decoding successful! Payload in same directory.") # Success message pop up
                     changeStateButton()
                     return
                 tk.messagebox.showinfo(title="Success!", message="Decoding successful!") # Success message pop up           
@@ -353,7 +353,7 @@ def vp_start_gui():
             if path.endswith(".docx"):
                 text = docx2txt.process(path)
                 tbox_payload.insert(1.0,text)
-            elif path.endswith(".xls"):
+            elif (path.endswith(".xls") or path.endswith(".xlsx")):
                 payload_listb = tk.Listbox(window, selectmode=tk.SINGLE)
                 payload_listb.place(x=70,y=56,width=(279-30),height=(624-400))
                 payload_listb.insert("end", path)
@@ -379,6 +379,10 @@ def vp_start_gui():
             if path.endswith(".docx"):
                 text = docx2txt.process(path)
                 tbox_output.insert(1.0,text)
+            elif (path.endswith(".xls") or path.endswitch(".xlsx")):
+                output_listb = tk.Listbox(window, selectmode=tk.SINGLE)
+                output_listb.place(x=70,y=359,width=(471-70),height=(712-359))
+                output_listb.insert("end", path)
             else:    
                 with open(path, "r") as file:
                     for line in file:
@@ -564,7 +568,7 @@ def vp_start_gui():
                 #Call function to preview image & change cover flag to 1
                 previewImage(cover_path, 0)
                 cover_object_flag = 1
-            elif(cover_path.endswith(".txt") or cover_path.endswith(".docx") or cover_path.endswith(".xlsx") or cover_path.endswith(".pdf")):
+            elif(cover_path.endswith(".txt") or cover_path.endswith(".docx") or cover_path.endswith(".xlsx" or cover_path.endswith(".xls")) or cover_path.endswith(".pdf")):
                 #Call function to preview text & change cover flag to 1
                 previewText(cover_path, 0)
                 cover_object_flag = 1
@@ -596,7 +600,7 @@ def vp_start_gui():
                 #Call function to preview image & change payload flag to 1
                 previewImage(payload_path, 1)
                 payload_flag = 1
-            elif(payload_path.endswith(".txt") or payload_path.endswith(".docx") or payload_path.endswith(".xls")):
+            elif(payload_path.endswith(".txt") or payload_path.endswith(".docx") or payload_path.endswith(".xls") or payload_path.endswith(".xlsx")):
                 #Call function to preview text & change cover flag to 1
                 previewText(payload_path, 1)
                 payload_flag = 1
@@ -628,7 +632,7 @@ def vp_start_gui():
                 #Call function to preview image & change stego flag to 1
                 previewImage(stego_path, 2)
                 stego_flag = 1
-            elif(stego_path.endswith(".txt") or stego_path.endswith(".docx") or stego_path.endswith(".xls")):
+            elif(stego_path.endswith(".txt") or stego_path.endswith(".docx") or stego_path.endswith(".xls") or stego_path.endswith(".xlsx")):
                 #Call function to preview text & change cover flag to 1
                 previewText(stego_path, 2)
                 stego_flag = 1
@@ -895,7 +899,7 @@ def vp_start_gui():
             previewImage(cover_path, 0)
             print(cover_path)
             cover_object_flag = 1
-        elif(cover_path.endswith(".txt") or cover_path.endswith(".docx") or cover_path.endswith(".xls")):
+        elif(cover_path.endswith(".txt") or cover_path.endswith(".docx") or cover_path.endswith(".xls") or cover_path.endswith(".xlsx")):
             previewText(cover_path, 0)
             cover_object_flag = 1
         elif(cover_path.endswith(".mp4") or cover_path.endswith(".mov") or cover_path.endswith(".wmv") or cover_path.endswith(".avi")):
@@ -959,7 +963,7 @@ def vp_start_gui():
         if(stego_path.endswith(".png") or stego_path.endswith(".jpg") or stego_path.endswith(".bmp")):
             previewImage(stego_path, 2)
             stego_flag = 1
-        elif(stego_path.endswith(".txt") or stego_path.endswith(".docx") or stego_path.endswith(".xls")):
+        elif(stego_path.endswith(".txt") or stego_path.endswith(".docx") or stego_path.endswith(".xls") or stego_path.endswith(".xlsx")):
             previewText(stego_path, 2)
             stego_flag = 1
         elif(stego_path.endswith(".mp4") or stego_path.endswith(".mov") or stego_path.endswith(".wmv") or stego_path.endswith(".avi")):
@@ -1022,7 +1026,7 @@ def vp_start_gui():
         if(payload_path.endswith(".png") or payload_path.endswith(".jpg") or payload_path.endswith(".bmp")):
             previewImage(payload_path, 1)
             payload_flag = 1
-        elif(payload_path.endswith(".txt") or payload_path.endswith(".docx") or payload_path.endswith(".xls")):
+        elif(payload_path.endswith(".txt") or payload_path.endswith(".docx") or payload_path.endswith(".xls") or payload_path.endswith(".xlsx")):
             previewText(payload_path, 1)
             payload_flag = 1
         elif(payload_path.endswith(".mp4") or payload_path.endswith(".mov") or payload_path.endswith(".wmv") or payload_path.endswith(".avi")):

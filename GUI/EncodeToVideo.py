@@ -130,6 +130,9 @@ class Encode:
             print('Hiding in frame: ', frame+1)
             # Loop through each pixel in the current frame
             for values in image:
+                # Break the loop if all the data have been hidden
+                if (dataIndex >= dataLen):
+                    break
                 for pixel in values:
                     r = 0
                     g = 0

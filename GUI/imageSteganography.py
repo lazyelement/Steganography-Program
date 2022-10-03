@@ -157,7 +157,7 @@ def decode_img(imgFile, lsb):
     imgFile = imgFile.replace("encoded","decoded")
     saveAs = imgFile + fileExt
     with open(saveAs, "wb") as outFile:
-            outFile.write(decodedData)
+        outFile.write(decodedData)
 
     print("Saved decoded file as ", saveAs)
 

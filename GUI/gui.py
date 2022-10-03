@@ -179,13 +179,9 @@ def vp_start_gui():
                         print(secret_text)
                         previewText(secret_text,3)
                         tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as encoded_file.docx") # Success message pop up
-                elif(cover_path.endswith(".png") or cover_path.endswith(".jpg")):
+                elif(cover_path.endswith(".png") or cover_path.endswith(".jpg") or cover_path.endswith(".bmp")):
                     if(payload_path == ""):
-                        with open('tmp.txt', 'w') as f:
-                            f.write(inputValue_payload)
-                        output_path = encode_img(cover_path, 'tmp.txt', selectedLSB+1)
-                        if os.path.exists("tmp.txt"):
-                            os.remove("tmp.txt")
+                        output_path = encode_img(cover_path, inputValue_payload_path, selectedLSB+1)
                         previewImage(output_path, 3)
                         tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved in same file location, named (originalname)_encoded.png") # Success message pop up
                     else:
@@ -259,6 +255,20 @@ def vp_start_gui():
                         previewImage(secret_text,3)
                     elif(secret_text.endswith(".txt") or secret_text.endswith(".docx")):
                         previewText(secret_text,3)
+                elif(stego_path.endswith(".png") or stego_path.endswith(".jpg") or stego_path.endswith(".bmp")):
+                    output_path = decode_img(stego_path, selectedLSB+1)
+                    print(output_path)
+                    if(output_path.endswith(".txt") or output_path.endswith(".docx") or output_path.endswith(".xlsx")):
+                        previewText(output_path, 3)
+                    elif(output_path.endswith(".png") or output_path.endswith(".jpg") or output_path.endswith(".bmp")):
+                        previewImage(output_path, 3)
+                    elif(output_path.endswith(".mp4") or output_path.endswith(".mov")):
+                        previewVideo(output_path, 3)
+                    elif(output_path.endswith(".mp3") or output_path.endswith(".wav")):
+                        previewSound(output_path, 3)
+                    tk.messagebox.showinfo(title="Success!", message="Decoding successful! Payload in same directory as stego object.") # Success message pop up
+                    changeStateButton()
+                    return
                 tk.messagebox.showinfo(title="Success!", message="Decoding successful!") # Success message pop up           
             else:
                 tk.messagebox.showerror(title="Failed to decode", message="Decoding unsuccessful. Stego object missing.") # Error message pop up

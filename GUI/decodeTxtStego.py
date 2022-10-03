@@ -1,6 +1,7 @@
 import numpy as np
 import base64
 import os.path
+from os.path import join
 
 # convert data to binary
 def dataToBin(data):
@@ -16,15 +17,15 @@ def dataToBin(data):
 
 
 # Function to decode the stego and find the payload
-def decode (stegoFile, numOfBits):
+def decode_text2(stegoFile, numOfBits):
     print("[*] Decoding data... \n")
     
-    # Get path of stego file
-    stegoPath = os.path.join(os.getcwd(), stegoFile)
-
+    # # Get path of stego file
+    # stegoPath = os.path.join(os.getcwd(), stegoFile)
+    print(stegoFile)
     # Opens the stego file and reads it as bytes
     stegoBytes = ''
-    with open(stegoPath, "rb") as stego:
+    with open(stegoFile, "rb") as stego:
         stegoBytes = stego.read()
 
     # splitting stegoBytes to binary (8 bits per 1 byte) > xxxxxxxx xxxxxxxx xxxxxxxx
@@ -57,7 +58,7 @@ def decode (stegoFile, numOfBits):
     decodedData = decodedData[:-10]
     # Remove padding from file extention
     fileExt = fileExt.replace("@", "")
-    
+    print(decodedData)
     # Converts the hidden data back to a file from a Base64 format
     decodedData = base64.b64decode(eval(decodedData))
 
@@ -68,13 +69,18 @@ def decode (stegoFile, numOfBits):
     #print(decodedStr)
     #return decodedStr
     # Write the decoded data back to a file and saves it
-    decodedName = input("Filename to save as (Without file extension): ")
-    with open(decodedName + fileExt, "wb") as outFile:
+    # path for output
+    path=os.path.join(os.path.join(os.path.expanduser('~')), 'Desktop'), # set path to open desktop
+    name = 'decoded_output' + fileExt
+    path = ''.join(path)
+    output_path = join(path, name)
+    with open(output_path, "wb") as outFile:
         outFile.write(decodedData)
+    return(output_path)
 
     
 
 
-stegoFile = "NANANANA.txt"
-numOfBits = 7
-decode(stegoFile, numOfBits)
+# stegoFile = "NANANANA.txt"
+# numOfBits = 7
+# decode(stegoFile, numOfBits)

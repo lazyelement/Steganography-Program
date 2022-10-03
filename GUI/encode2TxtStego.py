@@ -1,6 +1,7 @@
 import numpy as np
 import base64
 import os.path
+from os.path import join
 
 # convert data to binary
 def dataToBin(data):
@@ -16,7 +17,7 @@ def dataToBin(data):
 
 
 # Function to hide payload inside cover
-def encode(coverFile, payloadFile, numOfBits):
+def encode_text2(coverFile, payloadFile, numOfBits):
     # Get path of cover file and payload file
     coverPath = os.path.join(os.getcwd(), coverFile)
     payloadPath = os.path.join(os.getcwd(), payloadFile)
@@ -99,15 +100,21 @@ def encode(coverFile, payloadFile, numOfBits):
     print("Encoded Text Length:", len(encodedText), "\n")
     print("########### Encoding Successful ###########\n")
     
+    # path for output
+    path=os.path.join(os.path.join(os.path.expanduser('~')), 'Desktop'), # set path to open desktop
+    name = 'encoded_output' + coverExt
+    path = ''.join(path)
+    output_path = join(path, name)
     # Saves ouput into a file
-    stegoObjName = input("Filename to save as (Without file extension): ")
-    with open(stegoObjName + coverExt, "wb") as outFile:
+    with open(output_path, "wb") as outFile:
             outFile.write(encodedText.encode('utf-8'))
+    
+    return(output_path)
 
 
 
-coverFile = "cover.txt"
-#coverFile = "egDoc.docx"
-payloadFile = "payload.JPG"
-numOfBits = 7
-encode(coverFile, payloadFile, numOfBits)
+# coverFile = "cover.txt"
+# #coverFile = "egDoc.docx"
+# payloadFile = "payload.JPG"
+# numOfBits = 7
+# encode(coverFile, payloadFile, numOfBits)

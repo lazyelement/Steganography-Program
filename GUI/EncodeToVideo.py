@@ -232,7 +232,7 @@ class Encode:
         # Clears the temp folder
         if os.path.exists("./tmp"):
             shutil.rmtree("./tmp")
-        return coverExt
+        return coverName, coverExt 
 
 # coverFile = "C:\\Users\\junwe\\Desktop\\SIT\\Temp\\Code\\palamp4.mp4"
 # payloadFile = "C:\\Users\\junwe\\Desktop\\SIT\\Temp\\narniaScript.docx"

@@ -173,7 +173,7 @@ def decoding_audio(stego_path,LSB_bit):
     
         # Converts the hidden data back to a file from a Base64 format
         decodedData = base64.b64decode(eval(decodedData))
-        print(decodedData)
+        #print(decodedData)
 
         # path for output
         path=os.path.join(os.path.join(os.path.expanduser('~')), 'Desktop'), # set path to open desktop

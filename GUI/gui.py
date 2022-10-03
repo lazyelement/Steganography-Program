@@ -153,21 +153,22 @@ def vp_start_gui():
                 elif(cover_path.endswith(".mp4") or cover_path.endswith(".wmv") or cover_path.endswith(".mov") or cover_path.endswith(".avi")):#If cover is video (MUST INSTALL ffmpeg @ https://windowsloop.com/install-ffmpeg-windows-10/)
                     if(payload_path == ""):#if input is from text box
                         en = Encode(cover_path, inputValue_payload, selectedLSB+1, False)
-                        output_ext = en.hideData()
-                        output_path = "video_encoded"+output_ext
+                        output_name, output_ext = en.hideData()
+                        output_path = output_name+output_ext
                         previewVideo(output_path, 3)
                         print(output_path)
-                        tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as video_encoded.mp4") # Success message pop up
+                        tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as " + output_name + ".mp4") # Success message pop up
                     else:
                         try:#if input is a file path
                             en = Encode(cover_path, payload_path, selectedLSB+1, True)
-                            output_ext = en.hideData()
+                            output_name, output_ext = en.hideData()
                             print(output_ext)
-                            output_path = "video_encoded"+output_ext
+                            output_path = output_name+output_ext
                             print(output_path)
                             previewVideo(output_path, 3)
-                            tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as video_encoded.mp4") # Success message pop up
-                        except ValueError:
+                            tk.messagebox.showinfo(title="Success!", message="Encoding successful! Output saved as " + output_name + ".mp4") # Success message pop up
+                        except ValueError as xx:
+                            print(xx)
                             tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Payload larger than cover object.") # Error
                 elif(cover_path.endswith(".docx")):
                     if(payload_path == ""):#if input is from text box
@@ -197,7 +198,8 @@ def vp_start_gui():
                 tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Payload missing.") # Error message pop up
             else:
                 tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Payload and cover object missing.") # Error message pop up
-        except ValueError:
+        except ValueError as xx:
+            print(xx)
             tk.messagebox.showerror(title="Failed to encode", message="Encoding unsuccessful. Payload larger than cover object.") # Error
         except:
             error_message = "Encoding unsuccessful." + str(exception)
@@ -235,9 +237,9 @@ def vp_start_gui():
                         previewText(secret_text,3)
                 elif(stego_path.endswith(".mp4") or stego_path.endswith(".wmv") or stego_path.endswith(".mov") or stego_path.endswith(".avi")):#if stego is video
                     de = Decode(stego_path, selectedLSB+1)#Create a decode object (according to JW's algo)
-                    decodedData, output_ext = de.showData()#Do the decode and return a file ext of the payload
+                    decodedData, stegoName, output_ext = de.showData()#Do the decode and return a file ext of the payload
                     if (decodedData == ""):
-                        output_path = 'video_decoded'+ output_ext#set global output_path = video_decoded.*ext*
+                        output_path = stegoName + '_decoded' + output_ext#set global output_path = video_decoded.*ext*
                         if(output_ext == ".txt" or output_ext == ".docx" or output_ext == ".xlsx" or output_ext == ".xls"):
                             previewText(output_path, 3)
                         elif(output_ext == ".png" or output_ext == ".jpg" or output_ext == ".bmp"):
@@ -247,7 +249,7 @@ def vp_start_gui():
                         elif(output_ext == ".mp3" or output_ext == ".wav"):
                             previewSound(output_path, 3)
                     else:
-                        output_path = 'video_decoded.txt'
+                        output_path = stegoName + '_decoded.txt'
                         previewText(output_path, 3)
                 elif(stego_path.endswith(".docx")):
                     secret_text = decode_docx(stego_path,selectedLSB+1)
@@ -258,7 +260,7 @@ def vp_start_gui():
                 elif(stego_path.endswith(".png") or stego_path.endswith(".jpg") or stego_path.endswith(".bmp")):
                     output_path = decode_img(stego_path, selectedLSB+1)
                     print(output_path)
-                    if(output_path.endswith(".txt") or output_path.endswith(".docx") or output_path.endswith(".xls") or secret_text.endswith(".xlsx")):
+                    if(output_path.endswith(".txt") or output_path.endswith(".docx") or output_path.endswith(".xls") or output_path.endswith(".xlsx")):
                         previewText(output_path, 3)
                     elif(output_path.endswith(".png") or output_path.endswith(".jpg") or output_path.endswith(".bmp")):
                         previewImage(output_path, 3)
@@ -272,7 +274,8 @@ def vp_start_gui():
                 tk.messagebox.showinfo(title="Success!", message="Decoding successful!") # Success message pop up           
             else:
                 tk.messagebox.showerror(title="Failed to decode", message="Decoding unsuccessful. Stego object missing.") # Error message pop up
-        except:
+        except Exception as x:
+            print(x)
             tk.messagebox.showerror(title="Failed to decode", message="Decoding unsuccessful. Check LSB or Stego.") # Error message pop up
         changeStateButton()
 
@@ -379,7 +382,7 @@ def vp_start_gui():
             if path.endswith(".docx"):
                 text = docx2txt.process(path)
                 tbox_output.insert(1.0,text)
-            elif (path.endswith(".xls") or path.endswitch(".xlsx")):
+            elif (path.endswith(".xls") or path.endswith(".xlsx")):
                 output_listb = tk.Listbox(window, selectmode=tk.SINGLE)
                 output_listb.place(x=70,y=359,width=(471-70),height=(712-359))
                 output_listb.insert("end", path)
@@ -686,6 +689,7 @@ def vp_start_gui():
             name = 'user_input_payload.txt'
             path = ''.join(path)
             output_path = join(path, name)
+            inputValue_payload = inputValue
             inputValue_payload_path = output_path
             # Saves ouput into a file
             with open(output_path, "wb") as outFile:

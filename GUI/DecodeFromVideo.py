@@ -115,7 +115,7 @@ class Decode:
             decodedData = base64.b64decode(eval(decodedData))
             fileExt = ".txt"
             # Write the decoded data back to a .txt file and saves it
-            with open(stegoName + "_decoded" + ".txt", "wb") as outFile:
+            with open(stegoName + "_decoded.txt", "wb") as outFile:
                 outFile.write(decodedData)
 
         else:
@@ -137,7 +137,7 @@ class Decode:
         if os.path.exists("./tmp"):
             shutil.rmtree("./tmp")
 
-        return decodedData, fileExt
+        return decodedData, stegoName, fileExt
 
 # filename = input("Enter file name to decode: ")
 # filepath = os.path.join(os.getcwd(), filename)

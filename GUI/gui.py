@@ -255,8 +255,12 @@ def vp_start_gui():
                     secret_text = decode_docx(stego_path,selectedLSB+1)
                     if(secret_text.endswith(".png") or secret_text.endswith(".jpg") or secret_text.endswith(".bmp")): #if secret is an image
                         previewImage(secret_text,3)
-                    elif(secret_text.endswith(".txt") or secret_text.endswith(".docx")):
+                    elif(secret_text.endswith(".txt") or secret_text.endswith(".docx") or secret_text.endswith(".xls") or secret_text.endswith(".xlsx")):
                         previewText(secret_text,3)
+                    elif(secret_text.endswith(".mp4") or secret_text.endswith(".mov")):
+                        previewVideo(secret_text, 3)
+                    elif(secret_text.endswith(".mp3") or secret_text.endswith(".wav")):
+                        previewSound(secret_text, 3)
                 elif(stego_path.endswith(".png") or stego_path.endswith(".jpg") or stego_path.endswith(".bmp")):
                     output_path = decode_img(stego_path, selectedLSB+1)
                     print(output_path)

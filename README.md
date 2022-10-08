@@ -71,7 +71,37 @@ Our program is also able to handle any errors such as:
 - Bits to use for decoding is not the correct amount of bits used for encoding
 
 ## 3. Installation Guide
-Install all the dependencies and then run the file named "gui.py" under the GUI directory
+Install all the dependencies under requirements.txt by running the following command:
+```pip install -r GUI/requirements.txt```
+
+Afterwhich you have download ffpeg from the following website: https://ffmpeg.org/download.html
+Download the appropriate build according to your system. Once downloaded you have to add ffmpeg to your environment path.
+
+For Windows:
+1. Open Start Search and type "env" and choose "Edit the system environment variables"
+2. Click the "Environment Variables" button towards the bottom part of the window
+3. Under "System Variables" section find the row with "Path" in the first column and click edit
+4. Click "New" and type in the path to the unzipped ffmpeg file
+5. Choose "OK" to save your changes
+
+For MacOS:
+1. Extract the file
+2. Navigate to the directory of the unzipped file
+3. Open terminal and type cd into that directory
+4. Type the following commands into terminal
+```
+sudo mkdir -p /usr/local/bin/
+sudo cp ./ffmpeg /usr/local/bin
+sudo chmod ugo+x /ust/local/bin/ffmpeg
+
+```
+5. Then type ```bash``` to enter bash mode
+6. Type 
+```
+open -e ~/.bash_profile
+
+```
+7. Then in the file that just opened type ```export PATH="/usr/local/bin:$PATH"``` at the end and save it
 
 
 Contributors:

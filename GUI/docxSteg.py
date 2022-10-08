@@ -1,4 +1,4 @@
-#! python3
+# Encode any file  to Docx | Decode Docx
 import numpy as np
 import base64
 import os.path

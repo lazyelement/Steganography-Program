@@ -40,6 +40,7 @@ into the following video
 
 https://user-images.githubusercontent.com/93068145/194687401-22af0ede-86cd-4386-b05c-6ce70c0101ed.mp4
 
+The following video shows the program encoding our image into the video we have selected. We also use the option of 2 bits to hide our image data into the video.
 
 https://user-images.githubusercontent.com/93068145/194687605-4115ad6e-c96b-4c29-8c3b-e2c7bdefdc8e.mov
 

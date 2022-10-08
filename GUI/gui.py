@@ -27,14 +27,15 @@ from tkVideoPlayer import TkinterVideo # pip install tkvideoplayer
 #from TkinterDnD2 import DND_FILES, TkinterDnD
 import pygame   #pip install pygame
 
-from text2textSteg import *
-from LSBaudio_modify import *
-from EncodeToVideo import *
-from DecodeFromVideo import *
-from decodeTxtStego import *
-from encode2TxtStego import *
+from txtSteg import *
+from encodeToTxtSteg import *
+from decodeTxtSteg import *
 from docxSteg import *
-from imageSteganography import *
+from imgSteg import *
+from audioSteg import *
+from encodeToVidSteg import *
+from decodeVidSteg import *
+
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path("./assets") 

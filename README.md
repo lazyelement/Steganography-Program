@@ -25,7 +25,7 @@ Users are able to decode any files that have been encoded by the program. Decodi
 
 ### *File Upload*
 The program provides two ways to upload files for encoding or decoding. 
-
+```
 #### 1. Drag and Drop
 
 Users are able to drag and drop their files from anywhere on their desktop directly into our program
@@ -33,7 +33,7 @@ Users are able to drag and drop their files from anywhere on their desktop direc
 #### 2. Browse Files
 
 Users are able to browse their computer directories to search for their files to upload into the program
-
+```
 ### *Visual Preview*
 The program is able to preview files that the users have uploaded/encoded/decoded. Image and Document file types are automatically shown to the users while Video and Audio file types have a play button for the users to preview the respective files.
 

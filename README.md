@@ -54,14 +54,6 @@ The following video shows the program encoding our image into the video we have 
 
 https://user-images.githubusercontent.com/93068145/194687605-4115ad6e-c96b-4c29-8c3b-e2c7bdefdc8e.mov
 
-Just for a reference, here are the two videos before and after encoding for a side-by-side comparison.
-
-Original Video
-https://user-images.githubusercontent.com/93068145/194687841-7e619211-ba80-418d-939f-b5ae940fa9e7.mp4
-
-Video holding image inside
-https://user-images.githubusercontent.com/93068145/194687926-d8a5f533-79f5-41f8-bcbf-a078f6ed4169.mp4
-
 
 ### *Decoding*
 Users are able to decode any files that have been encoded by the program. Decoding process accepts an encoded file and the number of bits that was used to encode the file. Using these two information the program decodes the given file and outputs the hidden file/data within the encoded file.
@@ -72,7 +64,11 @@ https://user-images.githubusercontent.com/93068145/194687987-8f18ce97-5e93-451e-
 
 
 ### *Error Handling*
-Sample Text
+Our program is also able to handle any errors such as:
+
+- File to hide (payload) is bigger than the file to hide in (cover)
+- There are no inputs
+- Bits to use for decoding is not the correct amount of bits used for encoding
 
 ## 3. Installation Guide
 Sample text

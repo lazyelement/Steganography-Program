@@ -1,4 +1,4 @@
-# ACW1.0_Steganography
+# Steganography-Program
 
 ## What is Steganography?
 > Steganography is the practice of concealing a message within another message or a physical object. In computing/electronic contexts, a computer file, message, image, or video is concealed within another file, message, image, or video.
@@ -75,9 +75,9 @@ Sample text
 
 
 Contributors:
-https://github.com/LC-GHub
-https://github.com/izzdanial99
-https://github.com/csgnwinter
-https://github.com/shyxxm
-https://github.com/junwei99555
-https://github.com/lazyelement
+- https://github.com/LC-GHub. 
+- https://github.com/izzdanial99. 
+- https://github.com/csgnwinter. 
+- https://github.com/shyxxm. 
+- https://github.com/junwei99555. 
+- https://github.com/lazyelement. 

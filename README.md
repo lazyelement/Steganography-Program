@@ -2,6 +2,7 @@
 
 ## What is Steganography?
 > Steganography is the practice of concealing a message within another message or a physical object. In computing/electronic contexts, a computer file, message, image, or video is concealed within another file, message, image, or video.
+
 Basically, Steganography allows you to hide any type of message or data within another file without the file changing completely. You could hide an excel sheet within an image file and no one will be able to tell there is a hidden excel file in said image.
 
 ## Program Overview 

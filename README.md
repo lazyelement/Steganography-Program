@@ -71,7 +71,7 @@ Our program is also able to handle any errors such as:
 - Bits to use for decoding is not the correct amount of bits used for encoding
 
 ## 3. Installation Guide
-Sample text
+Install all the dependencies and then run the file named "gui.py" under the GUI directory
 
 
 Contributors:

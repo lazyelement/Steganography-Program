@@ -25,11 +25,12 @@ Users are able to decode any files that have been encoded by the program. Decodi
 
 ### *File Upload*
 The program provides two ways to upload files for encoding or decoding. 
-##### 1. Drag and Drop
+
+#### 1. Drag and Drop
 
 Users are able to drag and drop their files from anywhere on their desktop directly into our program
 
-##### 2. Browse Files
+#### 2. Browse Files
 
 Users are able to browse their computer directories to search for their files to upload into the program
 

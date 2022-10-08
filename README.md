@@ -105,6 +105,8 @@ open -e ~/.bash_profile
 
 
 Now that all the dependencies have been installed. Run the program by going into the GUI directory of this project and running the "gui.py" file.
+If there is an error that states "there is no module named _overlapped" then go into the gui.py file and comment out the 6th line that says ```from asyncio.windows_events import ERROR_CONNECTION_ABORTED```
+
 
 Thank You
 

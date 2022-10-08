@@ -11,5 +11,5 @@ This is a Steganography program that enables users to hide their data within dif
 ## 2. Encoding 
 Users are able to encode any file type whether it is an audio, video, image, text, excel, document, into any of the following file types: 
 
-##### - Sample 1
-##### - Sample 2
+- Sample 1
+- Sample 2

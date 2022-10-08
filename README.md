@@ -24,7 +24,7 @@ They are also able to select the number of bits they would like the algorithm to
 Users are able to decode any files that have been encoded by the program. Decoding process accepts an encoded file and the number of bits that was used to encode the file. Using these two information the program decodes the given file and outputs the hidden file/data within the encoded file.
 
 ### *File Upload*
-The program provides two ways to upload files for encoding or decoding. 
+The program provides two ways to upload files for encoding or decoding. 1. Drag and Drop where users are able to drag and drop any files from anywhere into our program directly. 2. Browse Files where users are able to browse their computer directory to search for their file to be uploaded into our program.
 
 #### 1. Drag and Drop
 Users are able to drag and drop their files from anywhere on their desktop directly into our program

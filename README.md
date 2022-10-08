@@ -28,12 +28,15 @@ Users are able to encode any file type whether it is an audio, video, image, tex
 - Image (png, jpg, bmp)
 - Video (avi, mp4, mpeg, mov, mkv)
 - Audio (wav, mp3)
-- Document (txt, )
+- Document (txt)
 
 They are also able to select the number of bits they would like the algorithm to use for their encoding. 
 
 ### *Decoding*
 Users are able to decode any files that have been encoded by the program. Decoding process accepts an encoded file and the number of bits that was used to encode the file. Using these two information the program decodes the given file and outputs the hidden file/data within the encoded file.
+
+### *Error Handling*
+anfkanfsalfa
 
 ## 3. Installation Guide
 Sample text

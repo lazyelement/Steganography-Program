@@ -75,9 +75,9 @@ Sample text
 
 
 Contributors:
-https://github.com/LC-GHub. 
-https://github.com/izzdanial99. 
-https://github.com/csgnwinter. 
-https://github.com/shyxxm. 
-https://github.com/junwei99555. 
-https://github.com/lazyelement. 
+- https://github.com/LC-GHub. 
+- https://github.com/izzdanial99. 
+- https://github.com/csgnwinter. 
+- https://github.com/shyxxm. 
+- https://github.com/junwei99555. 
+- https://github.com/lazyelement. 

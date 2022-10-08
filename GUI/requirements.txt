@@ -1,8 +1,11 @@
+docx==0.2.4
 docx2txt==0.8
-numpy==1.23.3
-pandas==1.4.4
+numpy==1.20.1
+opencv_python==4.5.5.62
 Pillow==9.2.0
 pygame==2.1.2
-setuptools==63.2.0
+python_docx==0.8.11
+setuptools==56.0.0
 tkinterdnd2==0.3.0
 tkVideoPlayer==2.3
+

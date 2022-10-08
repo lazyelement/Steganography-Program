@@ -104,6 +104,11 @@ open -e ~/.bash_profile
 7. Then in the file that just opened type ```export PATH="/usr/local/bin:$PATH"``` at the end and save it
 
 
+Now that all the dependencies have been installed. Run the program by going into the GUI directory of this project and running the "gui.py" file.
+
+Thank You
+
+
 Contributors:
 - https://github.com/LC-GHub. 
 - https://github.com/izzdanial99. 

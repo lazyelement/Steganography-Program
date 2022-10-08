@@ -38,7 +38,7 @@ Users are able to encode any file type whether it is an audio, video, image, tex
 - Image (png, jpg, bmp)
 - Video (avi, mp4, mpeg, mov, mkv)
 - Audio (wav, mp3)
-- Document (txt)
+- Document (txt, docx)
 
 They are also able to select the number of bits they would like the algorithm to use for their encoding. 
 

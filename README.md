@@ -32,6 +32,16 @@ Users are able to encode any file type whether it is an audio, video, image, tex
 
 They are also able to select the number of bits they would like the algorithm to use for their encoding. 
 
+In this video we will encode the following image 
+
+![small](https://user-images.githubusercontent.com/93068145/194687381-1a8e4c6f-fb40-45bc-be42-3cd389ec4c3e.jpg)
+
+into the following video
+
+https://user-images.githubusercontent.com/93068145/194687401-22af0ede-86cd-4386-b05c-6ce70c0101ed.mp4
+
+
+
 ### *Decoding*
 Users are able to decode any files that have been encoded by the program. Decoding process accepts an encoded file and the number of bits that was used to encode the file. Using these two information the program decodes the given file and outputs the hidden file/data within the encoded file.
 
